@@ -75,11 +75,11 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
 
 # Output Schema (JSON only)
 ```
-{
+{{
   "risk_tier": "<General|Controlled|Sensitive|Restricted|Mission Critical>",
   "risk_rating": "<1|2|3|4|5>",
   "weighted_score": <float>,
-  "scores": {
+  "scores": {{
     "Data_Sensitivity": <int>,
     "Scope_of_Impact": <int>,
     "Configurational_Authority": <int>,
@@ -88,10 +88,10 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
     "Segregation_of_Duties": <int>,
     "Auditability": <int>,
     "Reversibility": <int>
-  },
+  }},
   "rationale": "<3‑5 succinct sentences referencing the highest‑impact criteria>",
   "confidence": "<High|Medium|Low>"
-}
+}}
 ```
 
 # Input
@@ -105,10 +105,10 @@ permission_name: "Modify All Data"
 permission_description: "Grants the user the ability to read, create, edit, and delete **all** records in the org, ignoring sharing rules and field‑level security."
 
 Expected JSON Output:
-{
+{{
   "risk_tier": "Mission Critical",
   "weighted_score": 4.8,
-  "scores": {
+  "scores": {{
     "Data_Sensitivity": 5,
     "Scope_of_Impact": 5,
     "Configurational_Authority": 3,
@@ -117,9 +117,9 @@ Expected JSON Output:
     "Segregation_of_Duties": 4,
     "Auditability": 3,
     "Reversibility": 4
-  },
+  }},
   "rationale": "Permission overrides all sharing controls and touches sensitive data org‑wide. Misuse would violate multiple regulatory obligations and cannot be fully reversed without significant effort.",
   "confidence": "High"
-}
+}}
 ```
 """
