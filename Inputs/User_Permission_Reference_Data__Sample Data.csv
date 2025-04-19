@@ -1,0 +1,59 @@
+Permission Name,API Name,Description
+Access Data Cloud Data Explorer,AccessCdpDataExplorer,Allows user access Data Cloud Data Explorer.
+Administer territory operations,ManageTerritories,Prerequisite user permission for a user to manage a territory branch.
+Allow sending of List Emails,ListEmailSend,"Allow users to create, edit and send List Emails"
+Api Only User,ApiUserOnly,Access Salesforce.com only through a Salesforce.com API.
+Author Apex,AuthorApex,Create Apex classes and triggers.
+Customize Application,CustomizeApplication,Customize the organization using App Setup menu options.
+Download AppExchange Packages,InstallPackaging,Install or uninstall AppExchange packages as system administrators.
+Edit Read Only Fields,EditReadonlyFields,Edit fields that are read only due to page layouts or field-level security.
+Enforce Enhanced Mobile App Security,MobileAppSecurity,Enforce admin-assigned enhanced mobile app security policies.
+Export Reports,ExportReport,Use Export Details and Printable View to export reports.
+Manage All Private Reports and Dashboards,ManagePvtRptsAndDashbds,Allows full access to reports and dashboards in all other users' private folders (API only).
+Manage Auth. Providers,ManageAuthProviders,Create and edit Auth. Providers
+Manage Certificates,ManageCertificates,Ability to manage certificates
+Manage Connected Apps,ManageRemoteAccess,"Manage, create, edit, and delete connected applications."
+Manage Custom Permissions,ManageCustom,"Create, edit, and delete custom permissions."
+Manage Custom Report Types,ManageCustomReportTypes,"Create, edit, and delete custom report types."
+Manage Encryption Keys,ManageEncryptionKeys,Manage tenant secrets.
+Manage Health Check,ManageHealthCheck,Ability to create new custom health check baselines
+Manage Public List Views,EditPublicFilters,"Create, edit, and delete public list views."
+Manage Reports in Public Folders,ManageReportsInPubFolders,"Create, edit, delete reports, and manage their sharing in all public folders."
+Manage Security Center,ManageSecurityCommandCenter,View all Security Center pages and manage app configurations.
+Manage Session Permission Set Activations,ManageSessionPermissionSets,Add or remove activation records for session-based permission sets.
+Mass Email,EmailMass,Send mass emails to contacts and leads.
+Modify All Data,ModifyAllData,"Create, edit, and delete all organization data, regardless of sharing settings."
+Modify Data Classification,ModifyDataClassification,View and modify field-level data classification metadata.
+Modify Metadata Through Metadata API Functions,ModifyMetadata,"Create, read, edit, and delete org metadata. Users must have appropriate access rights to the metadata they're trying to modify. Be careful if delegating this permission. Some metadata executes in system context, when object permissions, field-level security, and sharing rules that apply to the user are ignored. For example, Apex executes in system context."
+Password Never Expires,PasswordNeverExpires,Prevent the user's password from expiring.
+Send Email,EmailSingle,Send email to a single contact or lead.
+View All Custom Settings,ViewAllCustomSettings,Let users view all custom setting data directly and via the API.
+View All Data,ViewAllData,"View all organizational data, regardless of sharing settings."
+View Encrypted Data,ViewEncryptedData,View the value of encrypted fields in plain text.
+View Event Log Files,ViewEventLogFiles,Get CSV event log files via the API.
+View Security Center pages,ViewSecurityCommandCenter,View the Security Health Check page and the Security Center Dashboard page.
+View Setup and Configuration,ViewSetup,View the App Setup and Administrative Settings pages.
+Weekly Data Export,DataExport,Run the weekly data export service.
+Assign Permission Sets,AssignPermissionSets,Assign permission sets to users.
+Freeze Users,FreezeUsers,Freeze and unfreeze users.
+Manage Internal Users,ManageInternalUsers,Create and edit internal users.
+Manage IP Addresses,ManageIpAddresses,"Create, edit, and delete trusted IP ranges."
+Manage Login Access Policies,ManageLoginAccessPolicies,Specify the login access policies that apply to administrators and support organizations.
+Manage Password Policies,ManagePasswordPolicies,Set password restrictions and login lockout policies for all users.
+Manage Profiles and Permission Sets,ManageProfilesets,"Create, edit, and delete profiles and permission sets."
+Manage Roles,ManageRoles,"Create, edit, and delete roles."
+Manage Sharing,ManageSharing,"Create, edit, and recalculate sharing rules, edit organization-wide defaults, and enable the external sharing model."
+Manage Users,ManageUsers,"Create, edit, and deactivate users, and manage security settings, including profiles and roles."
+Monitor Login History,MonitorLoginHistory,"View and download login history, and create login history custom list views."
+Reset User Passwords and Unlock Users,ResetPasswords,"Unlock users whose accounts are locked, and reset user passwords."
+View All Users,ViewAllUsers,"View all users, regardless of sharing settings."
+Retain Field History,RetainFieldHistory,Retain field history records.
+View Real-Time Event Monitoring Data,ViewDataLeakageEvents,Query Real-Time Event Monitoring Data using the API.
+View Threat Detection Events,ViewAnomalyEvents,Allows user to view the threat detection events.
+Manage Customer Users,ManageCssUsers,Enable and disable contacts for Self-Service and Customer Portal access.
+Query All Files,QueryAllFiles,Allows View All Data users to SOQL query all files in the org.
+Manage Flow,ManageInteraction,"Allow users to view, create, edit, delete, and activate all flows and flow types in Lightning Experience apps and Setup."
+Allows user access Data Cloud,AccessGeniePlatform,Allows user access Genie Platform.
+Allows user access Data Cloud setup menu,AccessCustomerDataCloudSetup,Allows user access Data Cloud setup menu
+Access Event Monitoring Analytics Templates and Apps,AdminAnalyticsUser,Can create and use apps from Event Monitoring Analytics App template.
+Manage Territories,ManageTerritories,Manage territory configurations.
