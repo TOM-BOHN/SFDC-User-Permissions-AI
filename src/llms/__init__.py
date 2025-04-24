@@ -2,17 +2,17 @@
 LLM interaction module for permission evaluation.
 """
 
-from .evaluator import (
+from .risk_evaluator import (
     RiskRating,
-    create_chat_session,
     eval_summary
 )
 
 from .risk_classifier import classify_risk_rating
+from .chat_session import create_chat_session
 
 __all__ = [
     'RiskRating',
-    'create_chat_session',
     'eval_summary',
-    'classify_risk_rating'
+    'classify_risk_rating',
+    'create_chat_session'
 ] 

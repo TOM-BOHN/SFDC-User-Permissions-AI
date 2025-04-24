@@ -17,6 +17,8 @@ from typing import Tuple, Optional
 import logging
 import json
 
+from .chat_session import create_chat_session
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -39,41 +41,13 @@ class RiskRating(enum.Enum):
             logger.warning(f"Invalid risk rating value: {value}. Defaulting to GENERAL.")
             return cls.GENERAL
 
-def create_chat_session(
-    client = None,
-    model_name: str = 'gemini-2.0-flash'
-):
-    """
-    Creates a new chat session with the specified model.
-    
-    Args:
-        model_name (str): Name of the model to use
-        
-    Returns:
-        ChatSession: Initialized chat session
-    """
-    try:
-        is_retriable = lambda e: (isinstance(e, genai.errors.APIError) and e.code in {429, 503})
-
-        if not hasattr(genai.models.Models.generate_content, '__wrapped__'):
-          genai.models.Models.generate_content = retry.Retry(
-              predicate=is_retriable)(genai.models.Models.generate_content)
-
-        chat = client.chats.create(model=model_name)
-        return chat
-    
-    except Exception as e:
-        logger.error(f"Error creating chat session: {str(e)}")
-        raise
-
-
 def eval_summary(
     prompt: str,
     name: str,
     api_name: str,
     description: str,
     model_name: str = 'gemini-2.0-flash',
-    client  = None,
+    client = None,
     chat_session = None
 
 ) -> Tuple[str, RiskRating]:
@@ -86,6 +60,7 @@ def eval_summary(
         api_name (str): API name of the permission
         description (str): Description of the permission
         model_name (str): Name of the LLM model to use
+        client (Optional[GenerativeModel]): The Google Generative AI client
         chat_session (Optional[ChatSession]): Existing chat session to use
         
     Returns:
@@ -96,9 +71,16 @@ def eval_summary(
         ...     prompt="Evaluate risk for: {permission_name}",
         ...     name="View All Data",
         ...     api_name="ViewAllData",
-        ...     description="Can view all data"
+        ...     description="Can view all data",
+        ...     client=model
         ... )
+    
+    Raises:
+        ValueError: If neither client nor chat_session is provided
     """
+    if client is None and chat_session is None:
+        raise ValueError("Either client or chat_session must be provided")
+
     try:
         # Use existing chat session or create new one
         chat = chat_session or create_chat_session(client, model_name)
@@ -108,6 +90,7 @@ def eval_summary(
             response = chat.send_message(
                       message=prompt.format(
                       permission_name = name
+                    , permission_api_name = api_name
                     , permission_description = description
                 )
             )
