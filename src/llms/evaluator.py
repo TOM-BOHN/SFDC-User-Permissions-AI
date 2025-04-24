@@ -2,11 +2,24 @@
 Functions for evaluating permissions using LLM models.
 """
 
+!pip install -Uq "google-genai==1.7.0"
+
+from google import genai
+from google.genai import types
+from google.api_core import retry
+
+from IPython.display import Markdown, display
+
+genai.__version__
+
 import enum
 from typing import Tuple, Optional
 import logging
-from google.ai import generativelanguage as types
-from vertexai.preview.generative_models import GenerativeModel, ChatSession, Content
+import json
+
+import enum
+from typing import Tuple, Optional
+import logging
 import json
 
 # Set up logging
@@ -32,7 +45,8 @@ class RiskRating(enum.Enum):
             return cls.GENERAL
 
 def create_chat_session(
-    model_name: str = 'gemini-2.0-flash'
+    model_name: str = 'gemini-2.0-flash',
+    client = client
 ) -> ChatSession:
     """
     Creates a new chat session with the specified model.
@@ -44,12 +58,19 @@ def create_chat_session(
         ChatSession: Initialized chat session
     """
     try:
-        model = GenerativeModel(model_name)
-        chat = model.start_chat()
+        is_retriable = lambda e: (isinstance(e, genai.errors.APIError) and e.code in {429, 503})
+
+        if not hasattr(genai.models.Models.generate_content, '__wrapped__'):
+          genai.models.Models.generate_content = retry.Retry(
+              predicate=is_retriable)(genai.models.Models.generate_content)
+
+        chat = client.chats.create(model='gemini-2.0-flash')
         return chat
+    
     except Exception as e:
         logger.error(f"Error creating chat session: {str(e)}")
         raise
+
 
 def eval_summary(
     prompt: str,
