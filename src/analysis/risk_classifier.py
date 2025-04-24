@@ -13,8 +13,10 @@ logger = logging.getLogger(__name__)
 
 def classify_risk_rating(
     input_df: pd.DataFrame,
-    eval_func: Callable[[str, str, str, str], Tuple[str, str]],
+    eval_func: Callable[[str, str, str, str, str, str], Tuple[str, str]],
     prompt: str,
+    model_name: str = 'gemini-2.0-flash',
+    client: object = None,
     total_records: Optional[int] = None,
     checkin_interval: int = 60,
     debug: bool = True
@@ -71,6 +73,10 @@ def classify_risk_rating(
     if debug:
         print(f"Starting job to process {total_records} records.")
         print('####################\n')
+        
+    # Creating the chat session
+    chat_session = create_chat_session(client = client, model_name=model_name)
+
 
     # Process records
     for i in range(total_records):
@@ -104,7 +110,10 @@ def classify_risk_rating(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
-                    description=input_df['Description'].iloc[i]
+                    description=input_df['Description'].iloc[i],
+                    model_name='gemini-2.0-flash',
+                    client=client,
+                    chat_session=chat_session  # Reuse the same session
                 )
             except Exception as e:
                 logger.error(f"Error evaluating permission at index {i}: {str(e)}")
