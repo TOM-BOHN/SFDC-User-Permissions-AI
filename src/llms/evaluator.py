@@ -2,7 +2,7 @@
 Functions for evaluating permissions using LLM models.
 """
 
-!pip install -Uq "google-genai==1.7.0"
+#!pip install -Uq "google-genai==1.7.0"
 
 from google import genai
 from google.genai import types
@@ -45,9 +45,9 @@ class RiskRating(enum.Enum):
             return cls.GENERAL
 
 def create_chat_session(
-    model_name: str = 'gemini-2.0-flash',
-    client = client
-) -> ChatSession:
+    client = None,
+    model_name: str = 'gemini-2.0-flash'
+):
     """
     Creates a new chat session with the specified model.
     
@@ -64,7 +64,7 @@ def create_chat_session(
           genai.models.Models.generate_content = retry.Retry(
               predicate=is_retriable)(genai.models.Models.generate_content)
 
-        chat = client.chats.create(model='gemini-2.0-flash')
+        chat = client.chats.create(model=model_name)
         return chat
     
     except Exception as e:
@@ -78,7 +78,9 @@ def eval_summary(
     api_name: str,
     description: str,
     model_name: str = 'gemini-2.0-flash',
-    chat_session: Optional[ChatSession] = None
+    client = None,
+    chat_session = None
+
 ) -> Tuple[str, RiskRating]:
     """
     Evaluates a permission using an LLM to determine its risk rating.
@@ -104,16 +106,14 @@ def eval_summary(
     """
     try:
         # Use existing chat session or create new one
-        chat = chat_session or create_chat_session(model_name)
+        chat = chat_session or create_chat_session(client, model_name)
         
         # Generate detailed evaluation
         try:
             response = chat.send_message(
-                Content(
-                    prompt.format(
-                        permission_name=name,
-                        permission_description=description
-                    )
+                      message=prompt.format(
+                      permission_name = name
+                    , permission_description = description
                 )
             )
             verbose_eval = response.text
