@@ -173,3 +173,42 @@ __pycache__/
 !/outputs/results_csv_output/01_01_max_ts_date.csv
 /outputs/results_csv_output/*
 /outputs/results_pickle_output/*
+
+# LLM and AI-specific ignores
+*.env              # Environment files with API keys
+.env.*             # All environment file variants
+**/api_keys.txt    # Any API key files
+**/secrets.yaml    # Secret configuration files
+**/*secrets*       # Any files with 'secrets' in the name
+
+# LLM caches and temporary files
+**/.llm_cache/     # LLM response caches
+**/.embedding_cache/  # Embedding caches
+**/model_cache/    # Downloaded model files
+**/*.vec          # Vector files
+**/*.embedding    # Embedding files
+
+# Large data files and model weights
+**/*.ckpt         # Checkpoint files
+**/*.pt           # PyTorch model files
+**/*.pth          # PyTorch model files
+**/*.bin          # Binary model files
+**/*.h5           # HDF5 files
+data/raw/private/  # Private raw data directory
+
+# Temporary and debug outputs
+**/debug_prompts/  # Debug prompt outputs
+**/temp_outputs/   # Temporary output files
+**/*_debug.*      # Debug files
+**/*_test.*       # Test files
+
+# IDE and editor specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local development
+local_tests/
+personal_notes/
+scratch/
