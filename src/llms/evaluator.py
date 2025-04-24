@@ -17,11 +17,6 @@ from typing import Tuple, Optional
 import logging
 import json
 
-import enum
-from typing import Tuple, Optional
-import logging
-import json
-
 # Set up logging
 logger = logging.getLogger(__name__)
 
@@ -45,7 +40,7 @@ class RiskRating(enum.Enum):
             return cls.GENERAL
 
 def create_chat_session(
-    client = None,
+    client: Client= None,
     model_name: str = 'gemini-2.0-flash'
 ):
     """
@@ -78,8 +73,8 @@ def eval_summary(
     api_name: str,
     description: str,
     model_name: str = 'gemini-2.0-flash',
-    client = None,
-    chat_session = None
+    client: Client = None,
+    chat_session: Chat = None
 
 ) -> Tuple[str, RiskRating]:
     """

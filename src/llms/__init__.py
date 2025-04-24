@@ -4,12 +4,17 @@ LLM interaction module for permission evaluation.
 
 from .evaluator import (
     RiskRating,
+    create_chat_session,
     eval_summary,
-    create_chat_session
+    ChatSession
 )
+
+from .risk_classifier import classify_risk_rating
 
 __all__ = [
     'RiskRating',
+    'create_chat_session',
     'eval_summary',
-    'create_chat_session'
+    'ChatSession',
+    'classify_risk_rating'
 ] 

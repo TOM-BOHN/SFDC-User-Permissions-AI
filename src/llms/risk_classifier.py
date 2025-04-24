@@ -8,15 +8,15 @@ import logging
 from typing import Optional, Tuple, Callable
 from datetime import datetime
 
+from .evaluator import eval_summary, ChatSession as Chat
+
 # Set up logging
 logger = logging.getLogger(__name__)
 
 def classify_risk_rating(
     input_df: pd.DataFrame,
-    eval_func: Callable[[str, str, str, str, str, str], Tuple[str, str]],
     prompt: str,
-    model_name: str = 'gemini-2.0-flash',
-    client: object = None,
+    chat_session: Optional[Chat] = None,
     total_records: Optional[int] = None,
     checkin_interval: int = 60,
     debug: bool = True
@@ -26,8 +26,8 @@ def classify_risk_rating(
 
     Args:
         input_df (pd.DataFrame): Input DataFrame containing permission details
-        eval_func (Callable): Function that evaluates permissions and returns text and structured output
         prompt (str): Prompt template for evaluation
+        chat_session (Optional[Chat]): Chat session to reuse for evaluations
         total_records (int, optional): Number of records to process. If None, processes all records
         checkin_interval (int): Seconds between progress updates (default: 60)
         debug (bool): Whether to print debug information (default: True)
@@ -41,7 +41,7 @@ def classify_risk_rating(
         ...     'API Name': ['ViewAllData'],
         ...     'Description': ['Can view all data']
         ... })
-        >>> results = classify_risk_rating(df, eval_summary, prompt)
+        >>> results = classify_risk_rating(df, prompt)
     """
     # Input validation
     required_columns = ['Permission Name', 'API Name', 'Description']
@@ -73,10 +73,6 @@ def classify_risk_rating(
     if debug:
         print(f"Starting job to process {total_records} records.")
         print('####################\n')
-        
-    # Creating the chat session
-    chat_session = create_chat_session(client = client, model_name=model_name)
-
 
     # Process records
     for i in range(total_records):
@@ -106,13 +102,11 @@ def classify_risk_rating(
 
             # Evaluate permission
             try:
-                text_eval, struct_eval = eval_func(
+                text_eval, struct_eval = eval_summary(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
                     description=input_df['Description'].iloc[i],
-                    model_name='gemini-2.0-flash',
-                    client=client,
                     chat_session=chat_session  # Reuse the same session
                 )
             except Exception as e:
