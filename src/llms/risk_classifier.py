@@ -8,7 +8,7 @@ import logging
 from typing import Optional, Tuple, Callable
 from datetime import datetime
 
-from .evaluator import eval_summary, ChatSession as Chat
+from .evaluator import eval_summary, RiskRating, create_chat_session
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def classify_risk_rating(
     input_df: pd.DataFrame,
     prompt: str,
-    chat_session: Optional[Chat] = None,
+    chat_session  = None,
     total_records: Optional[int] = None,
     checkin_interval: int = 60,
     debug: bool = True

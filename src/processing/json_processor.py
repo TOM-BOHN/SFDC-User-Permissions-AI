@@ -104,7 +104,7 @@ def extract_json_fields(
     if debug:
         logger.info("Sample output of results:")
         print("\nFirst 5 rows of processed data:")
-        print(results_df.head())
+        display(results_df.head())
         print("\nColumns added:", list(fields_map.values()))
     
     return results_df 

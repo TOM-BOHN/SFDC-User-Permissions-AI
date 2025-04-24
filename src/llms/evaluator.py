@@ -40,7 +40,7 @@ class RiskRating(enum.Enum):
             return cls.GENERAL
 
 def create_chat_session(
-    client: Client= None,
+    client = None,
     model_name: str = 'gemini-2.0-flash'
 ):
     """
@@ -73,8 +73,8 @@ def eval_summary(
     api_name: str,
     description: str,
     model_name: str = 'gemini-2.0-flash',
-    client: Client = None,
-    chat_session: Chat = None
+    client  = None,
+    chat_session = None
 
 ) -> Tuple[str, RiskRating]:
     """
