@@ -128,8 +128,8 @@ def eval_summary(
                 response_schema=RiskRating,
             )
             response = chat.send_message(
-                Content("Convert the final score."),
-                generation_config=structured_output_config
+              message="Convert the final score.",
+              config=structured_output_config,
             )
             structured_eval = response.parsed
             
