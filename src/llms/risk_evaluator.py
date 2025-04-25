@@ -41,7 +41,7 @@ class RiskRating(enum.Enum):
             logger.warning(f"Invalid risk rating value: {value}. Defaulting to GENERAL.")
             return cls.GENERAL
 
-def eval_summary(
+def risk_eval_summary(
     prompt: str,
     name: str,
     api_name: str,
@@ -67,12 +67,11 @@ def eval_summary(
         Tuple[str, RiskRating]: Detailed evaluation text and structured risk rating
         
     Example:
-        >>> text, rating = eval_summary(
+        >>> text, rating = risk_eval_summary(
         ...     prompt="Evaluate risk for: {permission_name}",
         ...     name="View All Data",
         ...     api_name="ViewAllData",
-        ...     description="Can view all data",
-        ...     client=model
+        ...     description="Can view all data"
         ... )
     
     Raises:

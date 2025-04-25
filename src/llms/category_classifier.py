@@ -8,13 +8,13 @@ import logging
 from typing import Optional, Tuple, Callable
 from datetime import datetime
 
-from .risk_evaluator import risk_eval_summary, RiskRating
+from .category_evaluator import category_eval_summary, CategoryRating, CategoryLabel
 from .chat_session import create_chat_session
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
-def classify_risk_rating(
+def classify_category(
     input_df: pd.DataFrame,
     prompt: str,
     chat_session  = None,
@@ -23,7 +23,7 @@ def classify_risk_rating(
     debug: bool = True
 ) -> pd.DataFrame:
     """
-    Classifies risk ratings for permissions based on their descriptions.
+    Classifies categories for permissions based on their descriptions.
 
     Args:
         input_df (pd.DataFrame): Input DataFrame containing permission details
@@ -34,7 +34,7 @@ def classify_risk_rating(
         debug (bool): Whether to print debug information (default: True)
 
     Returns:
-        pd.DataFrame: Results DataFrame with risk classifications
+        pd.DataFrame: Results DataFrame with category classifications
 
     Example:
         >>> df = pd.DataFrame({
@@ -42,7 +42,7 @@ def classify_risk_rating(
         ...     'API Name': ['ViewAllData'],
         ...     'Description': ['Can view all data']
         ... })
-        >>> results = classify_risk_rating(df, prompt)
+        >>> results = classify_category(df, prompt)
     """
     # Input validation
     required_columns = ['Permission Name', 'API Name', 'Description']
@@ -61,7 +61,8 @@ def classify_risk_rating(
         'Permission Name',
         'API Name',
         'Description',
-        'Risk Rating',
+        'Category Rating',
+        'Category Label',
         'Evaluation',
         'Processing Time'
     ])
@@ -103,7 +104,7 @@ def classify_risk_rating(
 
             # Evaluate permission
             try:
-                text_eval, struct_eval = risk_eval_summary(
+                text_eval, rating, label = category_eval_summary(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
@@ -113,7 +114,8 @@ def classify_risk_rating(
             except Exception as e:
                 logger.error(f"Error evaluating permission at index {i}: {str(e)}")
                 text_eval = f"Error: {str(e)}"
-                struct_eval = "ERROR"
+                rating = "ERROR"
+                label = "ERROR"
 
             # Calculate processing time for this record
             record_time = time.time() - record_start_time
@@ -123,13 +125,15 @@ def classify_risk_rating(
                 input_df['Permission Name'].iloc[i],
                 input_df['API Name'].iloc[i],
                 input_df['Description'].iloc[i],
-                struct_eval,
+                rating,
+                label,
                 text_eval,
                 record_time
             ]
 
             if debug:
-                print('Risk Rating:', struct_eval)
+                print('Category Rating:', rating)
+                print('Category Label:', label)
                 print('####################\n')
 
         except Exception as e:
