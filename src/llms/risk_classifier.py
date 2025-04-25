@@ -5,7 +5,10 @@ Functions for classifying and analyzing risk in permissions data.
 import pandas as pd
 import time
 import logging
-from typing import Optional, Tuple, Callable
+import json
+import os
+from pathlib import Path
+from typing import Optional, Tuple, Dict
 from datetime import datetime
 
 from .risk_evaluator import risk_eval_summary, RiskRating
@@ -17,20 +20,29 @@ logger = logging.getLogger(__name__)
 def classify_risk_rating(
     input_df: pd.DataFrame,
     prompt: str,
-    chat_session  = None,
+    checkpoint_dir: str = "data/checkpoints",
+    job_id: Optional[str] = None,
+    resume_from_checkpoint: bool = False,
+    chat_session = None,
     total_records: Optional[int] = None,
     checkin_interval: int = 60,
+    checkpoint_interval: int = 10,
     debug: bool = True
 ) -> pd.DataFrame:
     """
     Classifies risk ratings for permissions based on their descriptions.
+    Includes checkpoint/recovery logic for long-running jobs.
 
     Args:
         input_df (pd.DataFrame): Input DataFrame containing permission details
         prompt (str): Prompt template for evaluation
-        chat_session (Optional[Chat]): Chat session to reuse for evaluations
+        checkpoint_dir (str): Directory to store checkpoint files
+        job_id (Optional[str]): Unique identifier for this job run. If None, uses timestamp
+        resume_from_checkpoint (bool): Whether to attempt to resume from last checkpoint
+        chat_session: Chat session to reuse for evaluations
         total_records (int, optional): Number of records to process. If None, processes all records
         checkin_interval (int): Seconds between progress updates (default: 60)
+        checkpoint_interval (int): Number of records between checkpoints (default: 10)
         debug (bool): Whether to print debug information (default: True)
 
     Returns:
@@ -42,7 +54,12 @@ def classify_risk_rating(
         ...     'API Name': ['ViewAllData'],
         ...     'Description': ['Can view all data']
         ... })
-        >>> results = classify_risk_rating(df, prompt)
+        >>> results = classify_risk_rating(
+        ...     df, 
+        ...     prompt,
+        ...     checkpoint_dir='data/checkpoints',
+        ...     resume_from_checkpoint=True
+        ... )
     """
     # Input validation
     required_columns = ['Permission Name', 'API Name', 'Description']
@@ -50,13 +67,19 @@ def classify_risk_rating(
     if missing_columns:
         raise ValueError(f"Input DataFrame missing required columns: {missing_columns}")
 
-    # Set total records
-    total_records = total_records or len(input_df)
-    if total_records > len(input_df):
-        logger.warning(f"Requested {total_records} records but only {len(input_df)} available")
-        total_records = len(input_df)
-
-    # Initialize results DataFrame
+    # Setup checkpoint directory
+    checkpoint_dir = Path(checkpoint_dir)
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate or load job ID and metadata
+    if job_id is None:
+        job_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    checkpoint_file = checkpoint_dir / f"risk_classification_{job_id}.json"
+    results_file = checkpoint_dir / f"risk_classification_{job_id}.csv"
+    
+    # Initialize or load checkpoint data
+    start_index = 0
     results_df = pd.DataFrame(columns=[
         'Permission Name',
         'API Name',
@@ -65,18 +88,41 @@ def classify_risk_rating(
         'Evaluation',
         'Processing Time'
     ])
+    
+    if resume_from_checkpoint and checkpoint_file.exists() and results_file.exists():
+        try:
+            # Load checkpoint metadata
+            with open(checkpoint_file, 'r') as f:
+                checkpoint_data = json.load(f)
+                start_index = checkpoint_data['last_processed_index'] + 1
+                
+            # Load previous results
+            results_df = pd.read_csv(results_file)
+            logger.info(f"Resuming from checkpoint at index {start_index}")
+            if debug:
+                print(f"Resuming from checkpoint at index {start_index}")
+        except Exception as e:
+            logger.error(f"Error loading checkpoint: {str(e)}. Starting from beginning.")
+            start_index = 0
+    
+    # Set total records
+    total_records = total_records or len(input_df)
+    if total_records > len(input_df):
+        logger.warning(f"Requested {total_records} records but only {len(input_df)} available")
+        total_records = len(input_df)
 
     # Start tracking time
     start_time = time.time()
     last_checkin = start_time
+    last_checkpoint = start_time
     
-    logger.info(f"Starting job to process {total_records} records at {datetime.now()}")
+    logger.info(f"Starting job {job_id} to process {total_records} records at {datetime.now()}")
     if debug:
-        print(f"Starting job to process {total_records} records.")
+        print(f"Starting job {job_id} to process {total_records} records.")
         print('####################\n')
 
     # Process records
-    for i in range(total_records):
+    for i in range(start_index, total_records):
         record_start_time = time.time()
         
         try:
@@ -84,7 +130,7 @@ def classify_risk_rating(
             current_time = time.time()
             if current_time - last_checkin >= checkin_interval:
                 elapsed = current_time - start_time
-                rate = (i + 1) / elapsed
+                rate = (i + 1 - start_index) / elapsed
                 remaining = (total_records - (i + 1)) / rate if rate > 0 else 0
                 logger.info(
                     f"Progress: {i+1}/{total_records} records "
@@ -119,27 +165,47 @@ def classify_risk_rating(
             record_time = time.time() - record_start_time
 
             # Append results
-            results_df.loc[len(results_df)] = [
-                input_df['Permission Name'].iloc[i],
-                input_df['API Name'].iloc[i],
-                input_df['Description'].iloc[i],
-                struct_eval,
-                text_eval,
-                record_time
-            ]
+            new_row = pd.DataFrame([{
+                'Permission Name': input_df['Permission Name'].iloc[i],
+                'API Name': input_df['API Name'].iloc[i],
+                'Description': input_df['Description'].iloc[i],
+                'Risk Rating': struct_eval,
+                'Evaluation': text_eval,
+                'Processing Time': record_time
+            }])
+            results_df = pd.concat([results_df, new_row], ignore_index=True)
 
             if debug:
                 print('Risk Rating:', struct_eval)
                 print('####################\n')
 
+            # Checkpoint if needed
+            if (i + 1) % checkpoint_interval == 0:
+                _save_checkpoint(
+                    checkpoint_file=checkpoint_file,
+                    results_file=results_file,
+                    results_df=results_df,
+                    last_index=i,
+                    job_id=job_id
+                )
+                last_checkpoint = current_time
+
         except Exception as e:
             logger.error(f"Error processing record {i}: {str(e)}")
+            # Save checkpoint on error
+            _save_checkpoint(
+                checkpoint_file=checkpoint_file,
+                results_file=results_file,
+                results_df=results_df,
+                last_index=i-1,
+                job_id=job_id
+            )
             continue
 
     # Final statistics
     end_time = time.time()
     total_time = end_time - start_time
-    avg_time = total_time / total_records
+    avg_time = total_time / (total_records - start_index)
     
     logger.info(
         f"Processing completed at {datetime.now()}. "
@@ -149,10 +215,57 @@ def classify_risk_rating(
 
     if debug:
         print('\n####################')
-        print(f"Total time taken: {total_time:.2f} seconds to process {total_records} records.")
+        print(f"Total time taken: {total_time:.2f} seconds to process {total_records - start_index} records.")
         print(f"Average time per record: {avg_time:.2f} seconds")
         print('\nSample Output of Results:')
         print(results_df.head())
         print()
 
-    return results_df 
+    # Save final results
+    _save_checkpoint(
+        checkpoint_file=checkpoint_file,
+        results_file=results_file,
+        results_df=results_df,
+        last_index=total_records-1,
+        job_id=job_id,
+        is_final=True
+    )
+
+    return results_df
+
+def _save_checkpoint(
+    checkpoint_file: Path,
+    results_file: Path,
+    results_df: pd.DataFrame,
+    last_index: int,
+    job_id: str,
+    is_final: bool = False
+) -> None:
+    """
+    Saves a checkpoint of the current processing state.
+    
+    Args:
+        checkpoint_file (Path): Path to save checkpoint metadata
+        results_file (Path): Path to save results DataFrame
+        results_df (pd.DataFrame): Current results
+        last_index (int): Index of last processed record
+        job_id (str): Unique job identifier
+        is_final (bool): Whether this is the final checkpoint
+    """
+    try:
+        # Save checkpoint metadata
+        checkpoint_data = {
+            'job_id': job_id,
+            'last_processed_index': last_index,
+            'timestamp': datetime.now().isoformat(),
+            'is_final': is_final
+        }
+        with open(checkpoint_file, 'w') as f:
+            json.dump(checkpoint_data, f)
+            
+        # Save results DataFrame
+        results_df.to_csv(results_file, index=False)
+        
+        logger.debug(f"Checkpoint saved at index {last_index}")
+    except Exception as e:
+        logger.error(f"Error saving checkpoint: {str(e)}") 
