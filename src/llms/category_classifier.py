@@ -118,7 +118,7 @@ def classify_category(
                 label = "ERROR"
 
             # Calculate processing time for this record
-            record_time = time.time() - record_start_time
+            record_time = round(time.time() - record_start_time, 2)
 
             # Append results
             results_df.loc[len(results_df)] = [

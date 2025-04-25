@@ -25,13 +25,13 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 ## Criterion
-| # | Criterion                                  | Weight  | Why it separates these 20 domains                                                                                                                                                |
-|------------------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | Primary Product / Feature Anchor           | 0.20    | Every category is anchored to a distinct product family or feature set. The permission should explicitly mention objects, components, or APIs that live in that product area.    |
-| 2 | Administrative vs End-User Function        | 0.20    | Categories split along who wields the power: org-/setup-level admins vs feature operators.                                                                                       |  
-| 3 | Data Interaction Pattern                   | 0.20    | Whether the permission changes metadata, data records, analytics datasets, or external streams helps choose between Data-centric domains                                         |
-| 4 | Platform Layer / Add-On Alignment          | 0.20    | Some domains correspond to premium add-ons. A permission that only exists when that managed package or license is present almost certainly belongs to that domain.               | 
-| 5 | Intended User Persona or Business Process  | 0.20    | Several categories map to clear personas or verticals. If the permission description references those workflows, boost that category.                                            |
+| # | Criterion                                 | Weight| Why it separates these 20 domains                                                                                                                                         |
+|-----------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Primary Product or Feature Anchor         | 0.20   | Distinct product family or feature set that anchors a category. The permission should explicitly mention objects, components, or APIs that live in that product area.    |
+| 2 | Administrative vs End-User Function       | 0.20   | Categories split along who wields the power: org-/setup-level admins vs feature operators.                                                                               |  
+| 3 | Data Interaction Pattern                  | 0.20   | Whether the permission changes metadata, data records, analytics datasets, or external streams helps identify Data-centric domains                                       |
+| 4 | Platform Layer or Add-On Alignment        | 0.20   | Some domains correspond to premium add-ons. A permission that only exists when that managed package or license is present belongs to that domain.                        | 
+| 5 | Intended User Persona or Business Process | 0.20   | Several categories map to clear personas or verticals. If the permission description references those workflows, boost that category.                                    |
 
 ## Match Scoring Scale
 5 – **Exact Match**: Perfect or 100% match; spot on.  
