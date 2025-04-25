@@ -78,7 +78,7 @@ class CategoryLabel(enum.Enum):
             return cls.UNKNOWN
 
 
-def risk_eval_summary(
+def category_eval_summary(
     prompt: str,
     name: str,
     api_name: str,
