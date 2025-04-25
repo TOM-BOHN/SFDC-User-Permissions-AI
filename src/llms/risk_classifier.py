@@ -162,7 +162,7 @@ def classify_risk_rating(
                 struct_eval = "ERROR"
 
             # Calculate processing time for this record
-            record_time = time.time() - record_start_time
+            record_time = round(time.time() - record_start_time,2)
 
             # Append results
             new_row = pd.DataFrame([{

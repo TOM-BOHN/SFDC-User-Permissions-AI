@@ -86,7 +86,6 @@ def category_eval_summary(
     model_name: str = 'gemini-2.0-flash',
     client = None,
     chat_session = None
-
 ) -> Tuple[str, CategoryRating, CategoryLabel]:
     """
     Evaluates a permission using an LLM to determine its category rating and label.
@@ -135,36 +134,49 @@ def category_eval_summary(
             logger.error(f"Error generating evaluation: {str(e)}")
             raise
             
-        # Generate structured output
+        # Generate structured output for rating
         try:
             structured_output_rating_config = types.GenerateContentConfig(
                 response_mime_type="text/x.enum",
                 response_schema=CategoryRating,
             )
-            structured_output_label_config = types.GenerateContentConfig(
-                response_mime_type="text/x.enum",
-                response_schema=CategoryLabel,
-            )
             response_rating = chat.send_message(
               message="Convert the final category rating.",
               config=structured_output_rating_config,
+            )
+            structured_rating = response_rating.parsed
+
+            # Validate structured output
+            if not isinstance(response_rating, CategoryRating):
+                logger.warning(f"Invalid structured output type: {type(response_rating)}")
+                response_rating = CategoryRating.from_string(str(response_rating))
+            
+        
+        except Exception as e:
+            logger.error(f"Error generating structured output for rating: {str(e)}") 
+            # Attempt to extract rating from verbose evaluation
+            structured_rating = _extract_fallback_rating(verbose_eval)
+
+        # Generate structured output for label
+        try:
+            structured_output_label_config = types.GenerateContentConfig(
+                response_mime_type="text/x.enum",
+                response_schema=CategoryLabel,
             )
             response_label = chat.send_message(
               message="Convert the final category label.",
               config=structured_output_label_config,
             )
+            structured_label = response_label.parsed
             
             # Validate structured output
-            if not isinstance(response_rating, CategoryRating):
-                logger.warning(f"Invalid structured output type: {type(response_rating)}")
-                response_rating = CategoryRating.from_string(str(response_rating))
             if not isinstance(response_label, CategoryLabel):
                 logger.warning(f"Invalid structured output type: {type(response_label)}")
                 response_label = CategoryLabel.from_string(str(response_label))
+
         except Exception as e:
-            logger.error(f"Error generating structured output: {str(e)}") 
+            logger.error(f"Error generating structured output for category label: {str(e)}") 
             # Attempt to extract rating from verbose evaluation
-            structured_rating = _extract_fallback_rating(verbose_eval)
             structured_label = _extract_fallback_label(verbose_eval)
             
         return verbose_eval, structured_rating, structured_label
