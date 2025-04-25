@@ -1,4 +1,4 @@
-from permission_scraper import extract_permission_data, clean_permission_data
+from .permission_scraper import extract_permission_data, clean_permission_data
 import os
 
 def scrape_permissions_from_file(html_file_path: str):
