@@ -141,7 +141,7 @@ def category_eval_summary(
                 response_schema=CategoryRating,
             )
             response_rating = chat.send_message(
-              message="Convert the final category rating.",
+              message="Convert the final category rating to a number between 0 and 5.",
               config=structured_output_rating_config,
             )
             structured_rating = response_rating.parsed
@@ -164,10 +164,11 @@ def category_eval_summary(
                 response_schema=CategoryLabel,
             )
             response_label = chat.send_message(
-              message="Convert the final category label.",
+              message="Convert the final category label to a number between 0 and 20.",
               config=structured_output_label_config,
             )
             structured_label = response_label.parsed
+
             
             # Validate structured output
             if not isinstance(structured_label, CategoryLabel):
