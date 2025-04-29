@@ -141,7 +141,7 @@ def category_eval_summary(
                 response_schema=CategoryRating,
             )
             response_rating = chat.send_message(
-              message="Convert the final category rating to a number between 0 and 5.",
+              message="Convert the final Match Rating to a CategoryRating.",
               config=structured_output_rating_config,
             )
             structured_rating = response_rating.parsed
@@ -164,7 +164,7 @@ def category_eval_summary(
                 response_schema=CategoryLabel,
             )
             response_label = chat.send_message(
-              message="Convert the final category label to a number between 0 and 20.",
+              message="Convert the final Permission Category to a CategoryLabel.",
               config=structured_output_label_config,
             )
             structured_label = response_label.parsed

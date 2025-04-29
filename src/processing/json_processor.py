@@ -58,8 +58,8 @@ def extract_json_fields(
     
     # Default fields to extract if none provided
     default_fields = {
-        'risk_tier': 'Risk Tier',
-        'risk_rating': 'Risk Rating',
+        'risk_rating_tier': 'Risk Rating Tier',
+        'risk_rating_score': 'Risk Rating Score',
         'weighted_score': 'Weighted Score',
         'scores': 'Scores',
         'rationale': 'Rationale',

@@ -75,8 +75,8 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
 # Output Schema (JSON only)
 ```
 {{
-  "risk_tier": "<General|Controlled|Sensitive|Restricted|Mission Critical>",
-  "risk_rating": "<1|2|3|4|5>",
+  "risk_rating_tier": "<General|Controlled|Sensitive|Restricted|Mission Critical>",
+  "risk_rating_score": "<1|2|3|4|5>",
   "weighted_score": <float>,
   "scores": {{
     "Data_Sensitivity": <int>,
