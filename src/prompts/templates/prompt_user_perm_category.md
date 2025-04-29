@@ -103,6 +103,8 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
 {{
   "permission_category": "<General Admin|Security Admin|User Management|Data Admin|Import and Export|Agentforce and Einstein|Report and Dashboard|Developer|User Interface|Object|Shield and Event Monitoring|Chatter and Communities|Data Cloud|CRM Analytics|Slack and Quip|Commerce|Field Service|Marketing Cloud and Pardot|CPQ|Industry Cloud>",
   "permission_order_number": "<1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20>",
+  "match_tier": "<No Match|Low Match|Moderate Match|High Match|Exact Match>",
+  "match_rating": "<1|2|3|4|5>",
   "weighted_match_score": <float>,
   "scores": {{
     "Data_Sensitivity": <int>,
