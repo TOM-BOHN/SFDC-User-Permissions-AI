@@ -147,9 +147,9 @@ def category_eval_summary(
             structured_rating = response_rating.parsed
 
             # Validate structured output
-            if not isinstance(response_rating, CategoryRating):
-                logger.warning(f"Invalid structured output type: {type(response_rating)}")
-                response_rating = CategoryRating.from_string(str(response_rating))
+            if not isinstance(structured_rating, CategoryRating):
+                logger.warning(f"Invalid structured output type: {type(structured_rating)}")
+                structured_rating = CategoryRating.from_string(str(structured_rating))
             
         
         except Exception as e:
@@ -170,9 +170,9 @@ def category_eval_summary(
             structured_label = response_label.parsed
             
             # Validate structured output
-            if not isinstance(response_label, CategoryLabel):
-                logger.warning(f"Invalid structured output type: {type(response_label)}")
-                response_label = CategoryLabel.from_string(str(response_label))
+            if not isinstance(structured_label, CategoryLabel):
+                logger.warning(f"Invalid structured output type: {type(structured_label)}")
+                structured_label = CategoryLabel.from_string(str(structured_label))
 
         except Exception as e:
             logger.error(f"Error generating structured output for category label: {str(e)}") 
