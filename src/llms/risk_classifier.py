@@ -25,9 +25,10 @@ def classify_risk_rating(
     resume_from_checkpoint: bool = False,
     chat_session = None,
     total_records: Optional[int] = None,
-    checkin_interval: int = 60,
+    checkin_interval: int = 120,
     checkpoint_interval: int = 10,
-    debug: bool = True
+    debug: bool = True,
+    verbose: bool = True
 ) -> pd.DataFrame:
     """
     Classifies risk ratings for permissions based on their descriptions.
@@ -117,6 +118,8 @@ def classify_risk_rating(
     last_checkpoint = start_time
     
     logger.info(f"Starting job {job_id} to process {total_records} records at {datetime.now()}")
+
+    #Share the start of the job
     if debug:
         print(f"Starting job {job_id} to process {total_records} records.")
         print('####################\n')
@@ -137,10 +140,15 @@ def classify_risk_rating(
                     f"({(i+1)/total_records*100:.1f}%). "
                     f"Est. time remaining: {remaining/60:.1f} minutes"
                 )
+                if debug:
+                    print(f"Progress: {i+1}/{total_records} records ")
+                    print(f"({(i+1)/total_records*100:.1f}%). ")
+                    print(f"Est. time remaining: {remaining/60:.1f} minutes")
+                    print('--------------------')
                 last_checkin = current_time
 
             # Debug output
-            if debug:
+            if debug and verbose:
                 print(f'Analyzing Permission {i+1} of {total_records}...')
                 print('Name:       ', input_df['Permission Name'].iloc[i])
                 print('API Name:   ', input_df['API Name'].iloc[i])
@@ -175,7 +183,7 @@ def classify_risk_rating(
             }])
             results_df = pd.concat([results_df, new_row], ignore_index=True)
 
-            if debug:
+            if debug and verbose:
                 print('Risk Rating:', struct_eval)
                 print('####################\n')
 
@@ -217,10 +225,11 @@ def classify_risk_rating(
         print('\n####################')
         print(f"Total time taken: {total_time:.2f} seconds to process {total_records - start_index} records.")
         print(f"Average time per record: {avg_time:.2f} seconds")
-        print('\nSample Output of Results:')
-        print(results_df.head())
-        print()
-
+        if verbose:
+            print('\nSample Output of Results:')
+            print(results_df.head())
+            print()
+    
     # Save final results
     _save_checkpoint(
         checkpoint_file=checkpoint_file,
