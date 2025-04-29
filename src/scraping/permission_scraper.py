@@ -83,13 +83,18 @@ def clean_permission_data(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: Cleaned permission data DataFrame
     """
+    
+    # Remove rows where Permission Name is blank or matches specific values
+    df = df[~df['Permission Name'].isin(['Label', 'API Name', 'Description', 'Session Activation Required'])]
+    df = df.dropna(subset=['Permission Name'])
+    
     # Remove duplicates
     df = df.drop_duplicates()
     
     # Reset index
     df = df.reset_index(drop=True)
     
-    return df 
+    return df
 
 def save_permission_data(df: pd.DataFrame, output_path: str):
     # Save to CSV in data/output directory
@@ -133,6 +138,11 @@ def scrape_permissions_from_file(html_file_paths: list[str], output_path: str = 
     save_permission_data(combined_df, output_path)
     
     print(f"\nFound total of {len(combined_df)} permissions across {len(html_file_paths)} files.")
+    # Count blank values before cleaning
+    blank_descriptions = combined_df['Description'].isna().sum()
+    blank_api_names = combined_df['API Name'].isna().sum()
+    print(f"Number of blank Descriptions: {blank_descriptions}")
+    print(f"Number of blank API Names: {blank_api_names}")  
     print("\nFirst few permissions:")
     print(combined_df.head())
     print(f"\nData saved to: {output_path or os.path.join('data', 'output', 'user_permission_reference_data.csv')}")
