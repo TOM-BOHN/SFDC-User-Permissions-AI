@@ -23,6 +23,8 @@ def classify_risk_rating(
     checkpoint_dir: str = "data/checkpoints",
     job_id: Optional[str] = None,
     resume_from_checkpoint: bool = False,
+    model_name: str = 'gemini-2.0-flash',
+    client = None,
     chat_session = None,
     total_records: Optional[int] = None,
     checkin_interval: int = 120,
@@ -61,7 +63,12 @@ def classify_risk_rating(
         ...     checkpoint_dir='data/checkpoints',
         ...     resume_from_checkpoint=True
         ... )
+    Raises:
+        ValueError: If neither client nor chat_session is provided
     """
+    if client is None and chat_session is None:
+        raise ValueError("Either client or chat_session must be provided")
+    
     # Input validation
     required_columns = ['Permission Name', 'API Name', 'Description']
     missing_columns = [col for col in required_columns if col not in input_df.columns]
@@ -141,10 +148,8 @@ def classify_risk_rating(
                     f"Est. time remaining: {remaining/60:.1f} minutes"
                 )
                 if debug:
-                    print(f"Progress: {i+1}/{total_records} records ")
-                    print(f"({(i+1)/total_records*100:.1f}%). ")
-                    print(f"Est. time remaining: {remaining/60:.1f} minutes")
-                    print('--------------------')
+                    print(f"Progress: ({(i+1)/total_records*100:.1f}%) {i+1}/{total_records} records ---> Est. time remaining: {remaining/60:.1f} minutes.")
+
                 last_checkin = current_time
 
             # Debug output
@@ -162,7 +167,9 @@ def classify_risk_rating(
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
                     description=input_df['Description'].iloc[i],
-                    chat_session=chat_session  # Reuse the same session
+                    model_name=model_name,
+                    client=client,
+                    chat_session=chat_session
                 )
             except Exception as e:
                 logger.error(f"Error evaluating permission at index {i}: {str(e)}")
