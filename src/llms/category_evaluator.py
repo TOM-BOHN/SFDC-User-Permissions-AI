@@ -198,15 +198,15 @@ def _extract_fallback_rating(eval_text: str) -> CategoryRating:
     try:
         # Look for rating keywords in the text
         text_lower = eval_text.lower()
-        if "exact match" in text_lower or "exact-match" in text_lower:
+        if "exact match" in text_lower or "exact_match" in text_lower:
             return CategoryRating.EXACT_MATCH
-        elif "high match" in text_lower or "high-match" in text_lower:
+        elif "high match" in text_lower or "high_match" in text_lower:
             return CategoryRating.HIGH_MATCH
-        elif "moderate match" in text_lower or "moderate-match" in text_lower:
+        elif "moderate match" in text_lower or "moderate_match" in text_lower:
             return CategoryRating.MODERATE_MATCH
-        elif "low match" in text_lower or "low-match" in text_lower:
+        elif "low match" in text_lower or "low_match" in text_lower:
             return CategoryRating.LOW_MATCH
-        elif "no match" in text_lower or "no-match" in text_lower:
+        elif "no match" in text_lower or "no_match" in text_lower:
             return CategoryRating.NO_MATCH
         else:
             return CategoryRating.UNKNOWN
@@ -226,45 +226,45 @@ def _extract_fallback_label(eval_text: str) -> CategoryLabel:
     try:
         # Look for label keywords in the text
         text_lower = eval_text.lower()
-        if "general admin" in text_lower or "general-admin" in text_lower:
+        if "general admin" in text_lower or "general_admin" in text_lower:
             return CategoryLabel.GENERAL_ADMIN
-        elif "security admin" in text_lower or "security-admin" in text_lower:
+        elif "security admin" in text_lower or "security_admin" in text_lower:
             return CategoryLabel.SECURITY_ADMIN
-        elif "user management" in text_lower or "user-management" in text_lower:
+        elif "user management" in text_lower or "user_management" in text_lower:
             return CategoryLabel.USER_MANAGEMENT
-        elif "data admin" in text_lower or "data-admin" in text_lower:
+        elif "data admin" in text_lower or "data_admin" in text_lower:
             return CategoryLabel.DATA_ADMIN
-        elif "import and export" in text_lower or "import-and-export" in text_lower:
+        elif "import and export" in text_lower or "import_and_export" in text_lower:
             return CategoryLabel.IMPORT_AND_EXPORT
-        elif "agentforce and einstein" in text_lower or "agentforce-and-einstein" in text_lower:
+        elif "agentforce and einstein" in text_lower or "agentforce_and_einstein" in text_lower:
             return CategoryLabel.AGENTFORCE_AND_EINSTEIN
-        elif "report and dashboard" in text_lower or "report-and-dashboard" in text_lower:
+        elif "report and dashboard" in text_lower or "report_and_dashboard" in text_lower:
             return CategoryLabel.REPORT_AND_DASHBOARD
         elif "developer" in text_lower or "developer" in text_lower:
             return CategoryLabel.DEVELOPER
-        elif "user interface" in text_lower or "user-interface" in text_lower:
+        elif "user interface" in text_lower or "user_interface" in text_lower:
             return CategoryLabel.USER_INTERFACE 
         elif "object" in text_lower or "object" in text_lower:
             return CategoryLabel.OBJECT
-        elif "shield and event monitoring" in text_lower or "shield-and-event-monitoring" in text_lower:
+        elif "shield and event monitoring" in text_lower or "shield_and_event_monitoring" in text_lower:
             return CategoryLabel.SHIELD_AND_EVENT_MONITORING
-        elif "chatter and communities" in text_lower or "chatter-and-communities" in text_lower:
+        elif "chatter and communities" in text_lower or "chatter_and_communities" in text_lower:
             return CategoryLabel.CHATTER_AND_COMMUNITIES
-        elif "data cloud" in text_lower or "data-cloud" in text_lower:
+        elif "data cloud" in text_lower or "data_cloud" in text_lower:
             return CategoryLabel.DATA_CLOUD
-        elif "crm analytics" in text_lower or "crm-analytics" in text_lower:
+        elif "crm analytics" in text_lower or "crm_analytics" in text_lower:
             return CategoryLabel.CRM_ANALYTICS
-        elif "slack and quip" in text_lower or "slack-and-quip" in text_lower:
+        elif "slack and quip" in text_lower or "slack_and_quip" in text_lower:
             return CategoryLabel.SLACK_AND_QUIP
         elif "commerce" in text_lower or "commerce" in text_lower:
             return CategoryLabel.COMMERCE
-        elif "field service" in text_lower or "field-service" in text_lower:
+        elif "field service" in text_lower or "field_service" in text_lower:
             return CategoryLabel.FIELD_SERVICE
-        elif "marketing cloud and pardot" in text_lower or "marketing-cloud-and-pardot" in text_lower:
+        elif "marketing cloud and pardot" in text_lower or "marketing_cloud_and_pardot" in text_lower:
             return CategoryLabel.MARKETING_CLOUD_AND_PARDOT
         elif "cpq" in text_lower or "cpq" in text_lower:
             return CategoryLabel.CPQ
-        elif "industry cloud" in text_lower or "industry-cloud" in text_lower:
+        elif "industry cloud" in text_lower or "industry_cloud" in text_lower:
             return CategoryLabel.INDUSTRY_CLOUD
         else:
             return CategoryLabel.UNKNOWN

@@ -139,7 +139,7 @@ def _extract_fallback_rating(eval_text: str) -> RiskRating:
     try:
         # Look for rating keywords in the text
         text_lower = eval_text.lower()
-        if "mission critical" in text_lower or "mission-critical" in text_lower:
+        if "mission critical" in text_lower or "mission_critical" in text_lower:
             return RiskRating.MISSION_CRITICAL
         elif "restricted" in text_lower:
             return RiskRating.RESTRICTED
