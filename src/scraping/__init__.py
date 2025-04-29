@@ -11,11 +11,11 @@ Functions:
     scrape_permissions_from_file: Process permissions from an HTML file
 """
 
-from .permission_scraper import extract_permission_data, clean_permission_data
-from .run_scraper import scrape_permissions_from_file
+from .permission_scraper import extract_permission_data, clean_permission_data, save_permission_data, scrape_permissions_from_file
 
 __all__ = [
     'extract_permission_data',
     'clean_permission_data',
+    'save_permission_data',
     'scrape_permissions_from_file'
 ] 
