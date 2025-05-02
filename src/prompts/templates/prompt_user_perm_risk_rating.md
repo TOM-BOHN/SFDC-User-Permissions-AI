@@ -8,6 +8,7 @@
 -->
 
 # Instruction
+
 You are a **Salesforce security risk assessor**.
 Your task is to evaluate the **inherent risk level** of a Salesforce permission (or capability) when granted to a user.
 We will provide you with the permission name and a short description of what it allows.
@@ -17,16 +18,19 @@ Give step‑by‑step reasoning for your decision, citing the specific criteria 
 # Evaluation
 
 ## Metric Definition
+
 - **Permission Risk** [aka weighted_score] measures the potential negative impact of the permission overall on data confidentiality, integrity, availability, compliance, or overall business operations.
 - **Criteria Risk** measure the potential negative impact of the permission on a specific criteria.
 
 
-## Evaluation Criteria  
+## Evaluation Criteria
+
 For each criterion, assign an integer score from **1 (very low risk) to 5 (very high risk)**.
 Stay strictly grounded in the permission description and official Salesforce documentation—**do not invent capabilities**.
 
 
 ## Criterion
+
 1. **Data_Sensitivity** – Degree to which the permission exposes, exports, or alters sensitive data such as PII, PHI, financials, trade secrets, or encryption keys.
 2. **Scope_of_Impact** – Breadth of records, objects, or org‑wide settings the permission can affect in a single action.
 3. **Configurational_Authority** – AAbility to change metadata, code, automation, or system settings that influence other users or system behavior.
@@ -36,7 +40,8 @@ Stay strictly grounded in the permission description and official Salesforce doc
 7. **Auditability** – Availability and quality of logs to reconstruct activity (lower auditability ⇒ higher risk).  
 8. **Reversibility** – Ease of rolling back changes or recovering impacted data (irreversible ⇒ higher risk).
 
-## Criterion Weights  
+## Criterion Weights
+
 | Criterion                 | Weight  | Criterion Definition                                                                                                                       |
 |---------------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------|
 | Data_Sensitivity          | 0.25    | Degree to which the permission exposes, exports, or alters sensitive data such as PII, PHI, financials, trade secrets, or encryption keys. |
@@ -49,7 +54,8 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | Reversibility             | 0.05    | Ease of rolling back changes or recovering impacted data (irreversible ⇒ higher risk).                                                     |
 
 
-## Risk Rating Rubric  
+## Risk Rating Rubric
+
 - 5 – **Mission Critical**: Severe impact; misuse could trigger legal breaches or catastrophic operational failure.  
 - 4 – **Restricted**: High impact; limited to a few named custodians, tightly controlled and logged.  
 - 3 – **Sensitive**: Moderate‑high impact; allowed only to approved roles with strong oversight.  
@@ -58,6 +64,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 ## Risk Rating Rubric (map weighted score → Risk Tier)
+
 | Weighted Score Range | Risk Rating | Risk Rating Tier | Impact        | Risk Rating Definition                                                   |
 |----------------------|-------------|------------------|---------------|--------------------------------------------------------------------------|
 | 4.5 –  5.0           | 5           | Mission Critical | Severe        | Misuse could trigger legal breaches or catastrophic operational failure. |
@@ -67,6 +74,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | 1.0 – <1.5           | 1           | General          | Minimal       | Safe for most users under standard policies.                             |
 
 # Evaluation Steps
+
 - STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion risk** (1-5), noting specific risk factors.
 - STEP 2 - **Score Permission** - Each criterion risk score is **multiplied** by its weight and **sumed** to obtain the **permission risk (weighted_score)** (round to one decimal place).  
 - STEP 3 - **Risk Rating** - Select the overall Risk Level using the Rating Rubric by **Maping** the permission risk (weighted_score) to a **risk_rating_tier**.
@@ -75,6 +83,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 # Output Schema (JSON only)
+
 ```
 {{
   "risk_rating_tier": "<General|Controlled|Sensitive|Restricted|Mission Critical>",
@@ -96,6 +105,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 ```
 
 # Input
+
 - **Permission Name:** {permission_name} 
 - **API Name:** {permission_api_name} 
 - **Permission Description:** {permission_description}

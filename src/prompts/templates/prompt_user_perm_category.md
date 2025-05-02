@@ -8,6 +8,7 @@
 -->
 
 # Instruction
+
 You are a **Salesforce security risk assessor**.
 Your task is to categorize user security permission int **permission categories**.
 We will provide you with the permission name and a short description of what the Salesforce user permission (or capability) grants to a user.
@@ -17,16 +18,19 @@ Give step‑by‑step reasoning for your decision, citing the specific criteria 
 # Evaluation
 
 ## Metric Definition
+
 - **Permission Match Score** [aka weighted_score] measures the overall simiarity and quality of the match between the category and the permission.
 - **Criteria Match Score** measure the simiarity and quality of the match between the permission and the category for a specific criteria.
 
 
-## Evaluation Criteria  
+## Evaluation Criteria 
+
 For each criterion, assign an integer score from **1 (very low match) to 5 (very high match)**.
 Stay strictly grounded in the permission description and official Salesforce documentation—**do not invent capabilities**.
 
 
 ## Criterion
+
 | # | Criterion                                 | Weight| Why it separates these 20 domains                                                                                                                                         |
 |-----------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Primary Product or Feature Anchor         | 0.20   | Distinct product family or feature set that anchors a category. The permission should explicitly mention objects, components, or APIs that live in that product area.    |
@@ -36,6 +40,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | 5 | Intended User Persona or Business Process | 0.20   | Several categories map to clear personas or verticals. If the permission description references those workflows, boost that category.                                    |
 
 ## Match Scoring Scale
+
 - 5 – **Exact Match**: Perfect or 100% match; spot on.  
 - 4 – **High Match**: Strong or 75% match; pretty close.
 - 3 – **Moderate Match**: Fair or 50% match; decent fit.
@@ -44,6 +49,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 # Salesforce Permission Categories
+
 - **General Admin**: [1] [Core Platform] Focuses on organization-wide settings that establish the foundational operational parameters and identity of the Salesforce instance. Permissions typically include managing company profile information (e.g., name, address), fiscal year settings, currency management, default locale/language/time zones, license management and tracking, monitoring overall system/storage usage, managing org-wide email deliverability settings, basic sandbox lifecycle management (creation/refresh only), and potentially managing the organization's billing and contract details with Salesforce. This category explicitly excludes permissions related to user setup/access control, security policy configuration, data model/interface customization, data access/manipulation, and application deployment, which are governed by other specific categories.
 - **Security Admin**: [2] [Core Platform] Focuses on securing the Salesforce organization by controlling authentication, access policies, and monitoring security posture. Permissions typically cover managing password policies, multi-factor authentication (MFA) setup, IP restrictions, session settings, login flows, Health Check configuration, managing Connected Apps for API client authorization and access, and potentially managing certificates and keys used for authentication or integration security.
 - **User Management Admin**: [3] [Core Platform] Governs the complete lifecycle and access configuration for all users (internal, external site/portal users, identity users). Permissions encompass creating and managing users; defining and assigning all forms of access control (including profiles, permission sets, permission set groups, roles, public groups, queues); delegating specific administrative tasks to users; managing password policies, resets, and session settings; unlocking accounts; and overseeing user login access and activation/deactivation. This category holds the primary responsibility for defining who can access Salesforce and what foundational permissions they are granted through profiles and permission sets.
@@ -113,6 +119,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 # Evaluation Steps
+
 - STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion match score** (1-5), noting specific matching factors.
 - STEP 2 - **Score Permission** - Each criterion match score is **multiplied** by its weight and **sumed** to obtain the **permission match score (weighted_score)** (round to one decimal place).  
 - STEP 3 - **Match Rating** - Select the best fitting category using the highest permission match ratting to assign the **Maping** to a category.
@@ -121,6 +128,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 # Output Schema (JSON only)
+
 ```
 {{
   "permission_category_label": "<General Admin|Security Admin|User Management Admin|Data Admin|Import and Export|Agentforce|Einstein and AI|Report and Dashboard|Developer|User Interface|Object Access|Data Cloud|CRM Analytics|Chatter and Communities|Shield and Event Monitoring|Sales Cloud|Service Cloud|Marking Cloud and Pardot|Commerce Cloud|Slack and Quip|CPQ|Field Service|Financial Services Cloud|Healthcare & Life Sciences Cloud|Consumer Goods Cloud|Communications Cloud|Manufacturing Cloud|Nonprofit Cloud|General Industries Cloud|UNKNOWN>",
@@ -144,6 +152,7 @@ Stay strictly grounded in the permission description and official Salesforce doc
 ```
 
 # Input
+
 - **Permission Name:** {permission_name} 
 - **API Name:** {permission_api_name} 
 - **Permission Description:** {permission_description}
