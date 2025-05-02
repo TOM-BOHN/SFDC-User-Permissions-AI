@@ -31,8 +31,8 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 ## Criterion
 
-| # | Criterion                                 | Weight| Why it separates these 20 domains                                                                                                                                         |
-|-----------------------------------------------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| # | Criterion                                 | Weight | Why it separates these 20 domains                                                                                                                                        |
+|---|-------------------------------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1 | Primary Product or Feature Anchor         | 0.20   | Distinct product family or feature set that anchors a category. The permission should explicitly mention objects, components, or APIs that live in that product area.    |
 | 2 | Administrative vs End-User Function       | 0.20   | Categories split along who wields the power: org-/setup-level admins vs feature operators.                                                                               |  
 | 3 | Data Interaction Pattern                  | 0.20   | Whether the permission changes metadata, data records, analytics datasets, or external streams helps identify Data-centric domains                                       |
