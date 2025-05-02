@@ -1,9 +1,11 @@
+<!---
 # Permission Category Evaluation Prompt Template  
 # --------------------------------------------------
 # This template can be imported and formatted with the specific
 # `permission_name` and `permission_api_name` and `permission_description` variables to create
 # a concrete evaluation prompt for any Salesforce permission.
 # --------------------------------------------------
+-->
 
 # Instruction
 You are a **Salesforce security risk assessor**.
@@ -15,8 +17,8 @@ Give step‑by‑step reasoning for your decision, citing the specific criteria 
 # Evaluation
 
 ## Metric Definition
-**Permission Match Score** [aka weighted_score] measures the overall simiarity and quality of the match between the category and the permission.
-**Criteria Match Score** measure the simiarity and quality of the match between the permission and the category for a specific criteria.
+- **Permission Match Score** [aka weighted_score] measures the overall simiarity and quality of the match between the category and the permission.
+- **Criteria Match Score** measure the simiarity and quality of the match between the permission and the category for a specific criteria.
 
 
 ## Evaluation Criteria  
@@ -34,11 +36,11 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | 5 | Intended User Persona or Business Process | 0.20   | Several categories map to clear personas or verticals. If the permission description references those workflows, boost that category.                                    |
 
 ## Match Scoring Scale
-5 – **Exact Match**: Perfect or 100% match; spot on.  
-4 – **High Match**: Strong or 75% match; pretty close.
-3 – **Moderate Match**: Fair or 50% match; decent fit.
-2 – **Low Match**: Partial or 25% match; some overlap.
-1 – **No Match**: None or 0% match; totally off.
+- 5 – **Exact Match**: Perfect or 100% match; spot on.  
+- 4 – **High Match**: Strong or 75% match; pretty close.
+- 3 – **Moderate Match**: Fair or 50% match; decent fit.
+- 2 – **Low Match**: Partial or 25% match; some overlap.
+- 1 – **No Match**: None or 0% match; totally off.
 
 
 # Salesforce Permission Categories
@@ -111,11 +113,11 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 # Evaluation Steps
-STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion match score** (1-5), noting specific matching factors.
-STEP 2 - **Score Permission** - Each criterion match score is **multiplied** by its weight and **sumed** to obtain the **permission match score (weighted_score)** (round to one decimal place).  
-STEP 3 - **Match Rating** - Select the best fitting category using the highest permission match ratting to assign the **Maping** to a category.
-STEP 4 – **Summarize** - Aggregate findings and assess your confidence in the assigned category.  
-STEP 5 - **Output** - Format the output exactly as specified in the JSON object described below—nothing else.
+- STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion match score** (1-5), noting specific matching factors.
+- STEP 2 - **Score Permission** - Each criterion match score is **multiplied** by its weight and **sumed** to obtain the **permission match score (weighted_score)** (round to one decimal place).  
+- STEP 3 - **Match Rating** - Select the best fitting category using the highest permission match ratting to assign the **Maping** to a category.
+- STEP 4 – **Summarize** - Aggregate findings and assess your confidence in the assigned category.  
+- STEP 5 - **Output** - Format the output exactly as specified in the JSON object described below—nothing else.
 
 
 # Output Schema (JSON only)
@@ -142,6 +144,6 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
 ```
 
 # Input
-**Permission Name:** {permission_name} 
-**API Name:** {permission_api_name} 
-**Permission Description:** {permission_description}
+- **Permission Name:** {permission_name} 
+- **API Name:** {permission_api_name} 
+- **Permission Description:** {permission_description}

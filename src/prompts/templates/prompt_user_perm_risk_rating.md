@@ -1,9 +1,11 @@
+<!---
 # Permission Risk Evaluation Prompt Template  
 # --------------------------------------------------
 # This template can be imported and formatted with the specific
 # `permission_name` and `permission_api_name` and `permission_description` variables to create
 # a concrete evaluation prompt for any Salesforce permission.
 # --------------------------------------------------
+-->
 
 # Instruction
 You are a **Salesforce security risk assessor**.
@@ -15,8 +17,8 @@ Give step‑by‑step reasoning for your decision, citing the specific criteria 
 # Evaluation
 
 ## Metric Definition
-**Permission Risk** [aka weighted_score] measures the potential negative impact of the permission overall on data confidentiality, integrity, availability, compliance, or overall business operations.
-**Criteria Risk** measure the potential negative impact of the permission on a specific criteria.
+- **Permission Risk** [aka weighted_score] measures the potential negative impact of the permission overall on data confidentiality, integrity, availability, compliance, or overall business operations.
+- **Criteria Risk** measure the potential negative impact of the permission on a specific criteria.
 
 
 ## Evaluation Criteria  
@@ -48,11 +50,11 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 
 ## Risk Rating Rubric  
-5 – **Mission Critical**: Severe impact; misuse could trigger legal breaches or catastrophic operational failure.  
-4 – **Restricted**: High impact; limited to a few named custodians, tightly controlled and logged.  
-3 – **Sensitive**: Moderate‑high impact; allowed only to approved roles with strong oversight.  
-2 – **Controlled**: Moderate impact; broadly available but actively monitored.  
-1 – **General**: Minimal impact; safe for most users under standard policies.
+- 5 – **Mission Critical**: Severe impact; misuse could trigger legal breaches or catastrophic operational failure.  
+- 4 – **Restricted**: High impact; limited to a few named custodians, tightly controlled and logged.  
+- 3 – **Sensitive**: Moderate‑high impact; allowed only to approved roles with strong oversight.  
+- 2 – **Controlled**: Moderate impact; broadly available but actively monitored.  
+- 1 – **General**: Minimal impact; safe for most users under standard policies.
 
 
 ## Risk Rating Rubric (map weighted score → Risk Tier)
@@ -65,11 +67,11 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | 1.0 – <1.5           | 1           | General          | Minimal       | Safe for most users under standard policies.                             |
 
 # Evaluation Steps
-STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion risk** (1-5), noting specific risk factors.
-STEP 2 - **Score Permission** - Each criterion risk score is **multiplied** by its weight and **sumed** to obtain the **permission risk (weighted_score)** (round to one decimal place).  
-STEP 3 - **Risk Rating** - Select the overall Risk Level using the Rating Rubric by **Maping** the permission risk (weighted_score) to a **risk_rating_tier**.
-STEP 4 – **Summarize** - Aggregate findings and assess your confidence in the risk rating.  
-STEP 5 - **Output** - Format the output exactly as specified in the JSON object described below—nothing else.
+- STEP 1 - **Score Criterion** - Evaluate the permission against each criterion to obtain a **criterion risk** (1-5), noting specific risk factors.
+- STEP 2 - **Score Permission** - Each criterion risk score is **multiplied** by its weight and **sumed** to obtain the **permission risk (weighted_score)** (round to one decimal place).  
+- STEP 3 - **Risk Rating** - Select the overall Risk Level using the Rating Rubric by **Maping** the permission risk (weighted_score) to a **risk_rating_tier**.
+- STEP 4 – **Summarize** - Aggregate findings and assess your confidence in the risk rating.  
+- STEP 5 - **Output** - Format the output exactly as specified in the JSON object described below—nothing else.
 
 
 # Output Schema (JSON only)
@@ -94,6 +96,6 @@ STEP 5 - **Output** - Format the output exactly as specified in the JSON object 
 ```
 
 # Input
-**Permission Name:** {permission_name} 
-**API Name:** {permission_api_name} 
-**Permission Description:** {permission_description}
+- **Permission Name:** {permission_name} 
+- **API Name:** {permission_api_name} 
+- **Permission Description:** {permission_description}
