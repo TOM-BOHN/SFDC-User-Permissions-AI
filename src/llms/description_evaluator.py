@@ -122,12 +122,13 @@ def description_eval_summary(
                 logger.warning(f"Invalid structured output type: {type(structured_rating)}")
                 structured_rating = QualityRating.from_string(str(structured_rating))
             
-        
         except Exception as e:
             logger.error(f"Error generating structured output for rating: {str(e)}") 
             # Attempt to extract rating from verbose evaluation
             structured_rating = _extract_fallback_rating(verbose_eval)
         
+        return verbose_eval, structured_rating
+    
     except Exception as e:
         logger.error(f"Error in eval_summary: {str(e)}")
         return f"Error evaluating permission: {str(e)}", QualityRating.UNKNOWN
