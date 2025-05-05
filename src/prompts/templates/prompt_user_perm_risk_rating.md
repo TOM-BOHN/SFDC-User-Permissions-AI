@@ -107,5 +107,6 @@ Stay strictly grounded in the permission description and official Salesforce doc
 # Input
 
 - **Permission Name:** {permission_name} 
-- **API Name:** {permission_api_name} 
+- **Permission API Name:** {permission_api_name} 
 - **Permission Description:** {permission_description}
+- **Permission Expanded Description:** {permission_expanded_description}

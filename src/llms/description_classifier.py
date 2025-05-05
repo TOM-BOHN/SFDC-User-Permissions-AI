@@ -11,13 +11,13 @@ from pathlib import Path
 from typing import Optional, Tuple, Dict
 from datetime import datetime
 
-from .category_evaluator import category_eval_summary, CategoryRating, CategoryLabel
+from .description_evaluator import description_eval_summary, QualityRating
 from .chat_session import create_chat_session
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
-def classify_category(
+def classify_description(
     input_df: pd.DataFrame,
     prompt: str,
     checkpoint_dir: str = "data/checkpoints",
@@ -33,7 +33,7 @@ def classify_category(
     verbose: bool = True
 ) -> pd.DataFrame:
     """
-    Classifies categories for permissions based on their descriptions.
+    Classifies descriptions for permissions based on their descriptions.
     Includes checkpoint/recovery logic for long-running jobs.
     Args:
         input_df (pd.DataFrame): Input DataFrame containing permission details
@@ -54,10 +54,9 @@ def classify_category(
         >>> df = pd.DataFrame({
         ...     'Permission Name': ['View All Data'],
         ...     'API Name': ['ViewAllData'],
-        ...     'Description': ['Can view all data'],
-        ...     'Expanded Description': ['Can view all data in the organization']
+        ...     'Description': ['Can view all data'],]
         ... })
-        >>> results = classify_category(
+        >>> results = classify_description(
         ...     df, 
         ...     prompt,
         ...     checkpoint_dir='data/checkpoints',
@@ -70,7 +69,7 @@ def classify_category(
         raise ValueError("Either client or chat_session must be provided")
     
     # Input validation
-    required_columns = ['Permission Name', 'API Name', 'Description', 'Expanded Description']
+    required_columns = ['Permission Name', 'API Name', 'Description']
     missing_columns = [col for col in required_columns if col not in input_df.columns]
     if missing_columns:
         raise ValueError(f"Input DataFrame missing required columns: {missing_columns}")
@@ -83,8 +82,8 @@ def classify_category(
     if job_id is None:
         job_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    checkpoint_file = checkpoint_dir / f"category_classification_{job_id}.json"
-    results_file = checkpoint_dir / f"category_classification_{job_id}.csv"
+    checkpoint_file = checkpoint_dir / f"description_classification_{job_id}.json"
+    results_file = checkpoint_dir / f"description_classification_{job_id}.csv"
     
     # Initialize or load checkpoint data
     start_index = 0
@@ -92,9 +91,7 @@ def classify_category(
         'Permission Name',
         'API Name',
         'Description',
-        'Expanded Description',
-        'Category Rating',
-        'Category Label',
+        'Quality Rating',
         'Evaluation',
         'Processing Time'
     ])
@@ -160,17 +157,15 @@ def classify_category(
                 print('Name:       ', input_df['Permission Name'].iloc[i])
                 print('API Name:   ', input_df['API Name'].iloc[i])
                 print('Description:', input_df['Description'].iloc[i])
-                print('Expanded Description:', input_df['Expanded Description'].iloc[i])
                 print('--------------------')
 
             # Evaluate permission
             try:
-                text_eval, rating, label = category_eval_summary(
+                text_eval, rating = description_eval_summary(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
                     description=input_df['Description'].iloc[i],
-                    expanded_description=input_df['Expanded Description'].iloc[i],
                     model_name=model_name,
                     client=client,
                     chat_session=chat_session
@@ -179,7 +174,6 @@ def classify_category(
                 logger.error(f"Error evaluating permission at index {i}: {str(e)}")
                 text_eval = f"Error: {str(e)}"
                 rating = "ERROR"
-                label = "ERROR"
 
             # Calculate processing time for this record
             record_time = round(time.time() - record_start_time, 2)
@@ -189,17 +183,14 @@ def classify_category(
                 'Permission Name': input_df['Permission Name'].iloc[i],
                 'API Name': input_df['API Name'].iloc[i],
                 'Description': input_df['Description'].iloc[i],
-                'Expanded Description': input_df['Expanded Description'].iloc[i],
-                'Category Rating': rating,
-                'Category Label': label,
+                'Quality Rating': rating,
                 'Evaluation': text_eval,
                 'Processing Time': record_time
             }])
             results_df = pd.concat([results_df, new_row], ignore_index=True)
 
             if debug and verbose:
-                print('Category Rating:', rating)
-                print('Category Label:', label)
+                print('Quality Rating:', rating)
                 print('####################\n')
 
             # Checkpoint if needed

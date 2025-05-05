@@ -1,0 +1,54 @@
+Architecture Tool,Group,User Permission,API Name
+Security Center,Permissions,API Only User Access,ApiUserOnly
+Security Center,Permissions,Access Data Cloud Data Explorer,AccessCdpDataExplorer
+Security Center,Permissions,Access Event Monitoring Analytics Templates and Apps,AdminAnalyticsUser
+Security Center,Permissions,Allows User Access Data Cloud,AccessGeniePlatform
+Security Center,Permissions,Allows User Access Data Cloud Setup Menu,AccessCustomerDataCloudSetup
+Security Center,Permissions,Assign Permission Sets,AssignPermissionSets
+Security Center,Permissions,Author Apex,AuthorApex
+Security Center,Permissions,Customize Application,CustomizeApplication
+Security Center,Permissions,Download AppExchange Packages,InstallPackaging
+Security Center,Permissions,Edit Read Only Fields,EditReadonlyFields
+Security Center,Permissions,Enforce Enhanced Mobile App Security,MobileAppSecurity
+Security Center,Permissions,Export Reports,ExportReport
+Security Center,Permissions,Freeze Users,FreezeUsers
+Security Center,Permissions,List Email Send,ListEmailSend
+Security Center,Permissions,Manage All Private Reports and Dashboards,ManagePvtRptsAndDashbds
+Security Center,Permissions,Manage Auth. Providers,ManageAuthProviders
+Security Center,Permissions,Manage Certificates,ManageCertificates
+Security Center,Permissions,Manage Connected Apps,ManageRemoteAccess
+Security Center,Permissions,Manage Custom Permissions,ManageCustomPermissions
+Security Center,Permissions,Manage Customer Users,ManageCssUsers
+Security Center,Permissions,Manage Encryption Keys,ManageEncryptionKeys
+Security Center,Permissions,Manage Flow,ManageInteraction
+Security Center,Permissions,Manage Health Check,ManageHealthCheck
+Security Center,Permissions,Manage IP Addresses,ManageIpAddresses
+Security Center,Permissions,Manage Internal Users,ManageInternalUsers
+Security Center,Permissions,Manage Login Access Policies,ManageLoginAccessPolicies
+Security Center,Permissions,Manage Password Policy,ManagePasswordPolicies
+Security Center,Permissions,Manage Profiles and Permission Sets,ManageProfilesets
+Security Center,Permissions,Manage Roles,ManageRoles
+Security Center,Permissions,Manage Security Center,ManageSecurityCommandCenter
+Security Center,Permissions,Manage Session Permission Set Activations,ManageSessionPermissionSets
+Security Center,Permissions,Manage Sharing,ManageSharing
+Security Center,Permissions,Manage Users,ManageUsers
+Security Center,Permissions,Mass Email,EmailMass
+Security Center,Permissions,Modify All Data,ModifyAllData
+Security Center,Permissions,Modify Data Classification,ModifyDataClassification
+Security Center,Permissions,Modify Metadata Through Metadata API Functions,ModifyMetadata
+Security Center,Permissions,Monitor Login History,MonitorLoginHistory
+Security Center,Permissions,Password Never Expires,PasswordNeverExpires
+Security Center,Permissions,Query All Files,QueryAllFiles
+Security Center,Permissions,Reset User Passwords and Unlock Users,ResetPasswords
+Security Center,Permissions,Retain Field History,RetainFieldHistory
+Security Center,Permissions,Send Email,EmailSingle
+Security Center,Permissions,View All Custom Settings,ViewAllCustomSettings
+Security Center,Permissions,View All Data,ViewAllData
+Security Center,Permissions,View All Users,ViewAllUsers
+Security Center,Permissions,View Encrypted Data,ViewEncryptedData
+Security Center,Permissions,View Event Log Files,ViewEventLogFiles
+Security Center,Permissions,View Real-time Event Monitoring Data,ViewDataLeakageEvents
+Security Center,Permissions,View Security Center,ViewSecurityCommandCenter
+Security Center,Permissions,View Setup and Configuration,ViewSetup
+Security Center,Permissions,View Threat Detection Events,ViewAnomalyEvents
+Security Center,Permissions,Weekly Data Export,DataExport

@@ -11,13 +11,13 @@ from pathlib import Path
 from typing import Optional, Tuple, Dict
 from datetime import datetime
 
-from .category_evaluator import category_eval_summary, CategoryRating, CategoryLabel
+from .cloud_evaluator import cloud_eval_summary, CloudRating, CloudLabel
 from .chat_session import create_chat_session
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
-def classify_category(
+def classify_cloud(
     input_df: pd.DataFrame,
     prompt: str,
     checkpoint_dir: str = "data/checkpoints",
@@ -33,7 +33,7 @@ def classify_category(
     verbose: bool = True
 ) -> pd.DataFrame:
     """
-    Classifies categories for permissions based on their descriptions.
+    Classifies clouds for permissions based on their descriptions.
     Includes checkpoint/recovery logic for long-running jobs.
     Args:
         input_df (pd.DataFrame): Input DataFrame containing permission details
@@ -48,7 +48,7 @@ def classify_category(
         debug (bool): Whether to print debug information (default: True)
 
     Returns:
-        pd.DataFrame: Results DataFrame with category classifications
+        pd.DataFrame: Results DataFrame with cloud classifications
 
     Example:
         >>> df = pd.DataFrame({
@@ -57,7 +57,7 @@ def classify_category(
         ...     'Description': ['Can view all data'],
         ...     'Expanded Description': ['Can view all data in the organization']
         ... })
-        >>> results = classify_category(
+        >>> results = classify_cloud(
         ...     df, 
         ...     prompt,
         ...     checkpoint_dir='data/checkpoints',
@@ -83,8 +83,8 @@ def classify_category(
     if job_id is None:
         job_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     
-    checkpoint_file = checkpoint_dir / f"category_classification_{job_id}.json"
-    results_file = checkpoint_dir / f"category_classification_{job_id}.csv"
+    checkpoint_file = checkpoint_dir / f"cloud_classification_{job_id}.json"
+    results_file = checkpoint_dir / f"cloud_classification_{job_id}.csv"
     
     # Initialize or load checkpoint data
     start_index = 0
@@ -93,8 +93,8 @@ def classify_category(
         'API Name',
         'Description',
         'Expanded Description',
-        'Category Rating',
-        'Category Label',
+        'Cloud Rating',
+        'Cloud Label',
         'Evaluation',
         'Processing Time'
     ])
@@ -165,7 +165,7 @@ def classify_category(
 
             # Evaluate permission
             try:
-                text_eval, rating, label = category_eval_summary(
+                text_eval, rating, label = cloud_eval_summary(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
@@ -190,16 +190,16 @@ def classify_category(
                 'API Name': input_df['API Name'].iloc[i],
                 'Description': input_df['Description'].iloc[i],
                 'Expanded Description': input_df['Expanded Description'].iloc[i],
-                'Category Rating': rating,
-                'Category Label': label,
+                'Cloud Rating': rating,
+                'Cloud Label': label,
                 'Evaluation': text_eval,
                 'Processing Time': record_time
             }])
             results_df = pd.concat([results_df, new_row], ignore_index=True)
 
             if debug and verbose:
-                print('Category Rating:', rating)
-                print('Category Label:', label)
+                print('Cloud Rating:', rating)
+                print('Cloud Label:', label)
                 print('####################\n')
 
             # Checkpoint if needed

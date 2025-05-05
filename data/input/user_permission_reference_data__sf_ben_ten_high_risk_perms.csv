@@ -1,0 +1,12 @@
+API Name,Data Table Key,Rank,UI Label
+ResetPasswords,ResetPasswords_Permission,XX,Reset Passwords
+CustomizeApplication,CustomizeApplication_Permission,1,Customize Application
+ManageUsers,ManageUsers_Permission,2,Manage Users
+ModifyAllData,ModifyAllData_Permission,3,Modify All Data
+ViewAllData,ViewAllData_Permission,4,View All Data
+ManageProfilesets,ManageProfilesPermissionsets_Permission,5,Manage Profiles and Permission Sets
+ManageCustomReportTypes,ManageCustomReportTypes_Permission,6,Manage Custom Report Types
+EditPublicFilters,EditPublicFilters_Permission,7,Manage Public List Views
+ManageReportsInPubFolders,ManageReportsInPubFolders_Permission,8,Manage Reports in Public Folders
+ManageTerritories,ManageTerritories_Permission,9,Manage Territories
+InstallPackaging,InstallPackaging_Permission,10,Download AppExchange Packages
