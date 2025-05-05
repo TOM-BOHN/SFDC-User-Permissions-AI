@@ -31,6 +31,11 @@ def clean_json_string(json_string: str) -> str:
         json_string = json_string.replace(old, new)
     return json_string
 
+def clean_expanded_description_column(df):
+    if 'Expanded Description' in df.columns:
+        df['Expanded Description'] = df['Expanded Description'].str.replace(r'\s*\[\d+\]', '', regex=True)
+    return df
+
 def extract_json_fields(
     df: pd.DataFrame,
     json_column: str = 'Evaluation',
@@ -94,12 +99,14 @@ def extract_json_fields(
                 if isinstance(value, (list, dict)):
                     value = str(value)
                 results_df.loc[index, df_column] = value
-                
+
         except json.JSONDecodeError as e:
             logger.error(f"Error decoding JSON at index {index}: {str(e)}")
             logger.debug(f"Problematic JSON: {row[json_column]}")
         except Exception as e:
             logger.error(f"Unexpected error processing row {index}: {str(e)}")
+
+    results_df = clean_expanded_description_column(results_df)
     
     if debug:
         logger.info("Sample output of results:")
@@ -108,3 +115,8 @@ def extract_json_fields(
         print("\nColumns added:", list(fields_map.values()))
     
     return results_df 
+
+
+
+
+

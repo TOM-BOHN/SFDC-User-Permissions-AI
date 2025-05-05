@@ -64,7 +64,12 @@ Stay strictly grounded in the permission description and official Salesforce doc
 - **Manufacturing Cloud**: [12] [Industries] Contains permissions specific to Manufacturing Cloud, aimed at connecting sales, service, and operations for manufacturers. Permissions cover managing Sales Agreements (long-term volume/price contracts), Account-Based Forecasting (combining sales forecasts with operational plans), managing partner relationships (distributors, suppliers) via Experience Cloud for Manufacturing, tracking inventory, potentially managing warranties or service parts, and utilizing manufacturing-specific analytics.
 - **Nonprofit Cloud**: [13] [Industries] Includes permissions for Nonprofit Cloud, designed to meet the specific needs of nonprofit organizations. Permissions cover Fundraising features (managing donations, grants, recurring giving, payment processing), Program Management (tracking programs, services delivered, client participation), Case Management (for managing client needs and services), Outcome Management (measuring impact and mission success), potentially volunteer management, and managing marketing/engagement specific to donors and constituents.
 - **General Industries Clouds**: [14] [Industries] Acts as a general category for permissions that might apply to Salesforce Industry Clouds not listed a separatecategories (such as Energy & Utilities, Public Sector). Permissions here typically involve managing industry-specific features, standard or custom objects, configuring specialized workflows or automation tailored to industry processes, managing compliance settings relevant to the sector, and utilizing industry-specific console apps or analytics.
-- **UNKNOWN**: [15] [Other] Includes any permission that has no clear mapping to any of the established permission categories in the table. 
+- **Core Platform**: [15] [Core Platform] Acts as a general category for permissions that all apply to the core platform and control general features and functionality used across the clouds and industries.
+- **Data Cloud**: [16] [Core Platform Add-Ons] Relates specifically to Salesforce Data Cloud (formerly Customer Data Platform/CDP). Permissions govern connecting data sources to Data Cloud, configuring data streams, managing data mapping and harmonization, creating calculated insights, building segments, managing activation targets, and accessing Data Cloud features like explorers and data sets.
+- **CRM Analytics**: [17] [Core Platform Add-Ons] Pertains to CRM Analytics (formerly Tableau CRM / Einstein Analytics / Wave). Permissions allow users to upload data, build complex dataflows/recipes, create and manage datasets, build advanced dashboards (lenses and apps), explore data interactively, and potentially use Einstein Discovery for AI-driven insights within the analytics platform.
+- **Chatter and Communities**: [18] [Core Platform Add-Ons] Manages internal collaboration via Chatter and external access via Experience Cloud (formerly Communities). Permissions include moderating Chatter feeds/files, creating/managing Experience Cloud sites, managing Experience Cloud users (partners, customers), configuring site access/security, inviting external members, and controlling content sharing within feeds or sites.
+- **Shield and Event Monitoring**: [19] [Core Platform Add-Ons] Encompasses permissions related to Salesforce Shield components: Platform Encryption, Event Monitoring, and Transaction Security. Permissions allow administrators to manage encryption keys, select fields for encryption, access and analyze detailed event log files (tracking user actions, API calls, performance), set up real-time event-based security policies (Transaction Security), and manage Field Audit Trail. Salesforce Shield's Event Monitoring provides granular visibility into user activities, data access, and changes, enabling proactive security measures and compliance verification.
+- **UNKNOWN**: [99] [Other] Includes any permission that has no clear mapping to any of the established Salesforce Clouds in the table. 
 
 
 ## Salesforce Permission Categories Table
@@ -85,6 +90,11 @@ Stay strictly grounded in the permission description and official Salesforce doc
 | Manufacturing Cloud              | Industries            | 12    |
 | Nonprofit Cloud                  | Industries            | 13    |
 | General Industries Cloud         | Industries            | 14    |
+| Core Platform                    | Core Platform         | 15    |
+| Data Cloud                       | Core Platform Add-Ons | 16    |
+| CRM Analytics                    | Core Platform Add-Ons | 17    |
+| Chatter and Communities          | Core Platform Add-Ons | 18    |
+| Shield and Event Monitoring      | Core Platform Add-Ons | 19    |
 | UNKNOWN                          | Other                 | 99    |
 
 
@@ -101,8 +111,8 @@ Stay strictly grounded in the permission description and official Salesforce doc
 
 ```
 {{
-  "permission_cloud_label": "<Sales Cloud|Service Cloud|Marking Cloud and Pardot|Commerce Cloud|Slack and Quip|CPQ|Field Service|Financial Services Cloud|Healthcare & Life Sciences Cloud|Consumer Goods Cloud|Communications Cloud|Manufacturing Cloud|Nonprofit Cloud|General Industries Cloud|UNKNOWN>",
-  "permission_cloud_order": "<1|2|3|4|5|6|7|8|9|10|11|12|13|14|99>",
+  "permission_cloud_label": "<Sales Cloud|Service Cloud|Marking Cloud and Pardot|Commerce Cloud|Slack and Quip|CPQ|Field Service|Financial Services Cloud|Healthcare & Life Sciences Cloud|Consumer Goods Cloud|Communications Cloud|Manufacturing Cloud|Nonprofit Cloud|General Industries Cloud|Core Platform|Data Cloud|CRM Analytics|Chatter and Communities|Shield and Event Monitoring|UNKNOWN>",
+  "permission_cloud_order": "<1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|99>",
   "match_rating_tier": "<No Match|Low Match|Moderate Match|High Match|Exact Match>",
   "match_rating_score": "<1|2|3|4|5>",
   "weighted_match_score": <float>,
