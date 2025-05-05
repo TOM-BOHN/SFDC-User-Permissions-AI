@@ -47,7 +47,6 @@ def description_eval_summary(
     name: str,
     api_name: str,
     description: str,
-    expanded_description: str,
     model_name: str = 'gemini-2.0-flash',
     client = None,
     chat_session = None
@@ -60,7 +59,6 @@ def description_eval_summary(
         name (str): Permission name
         api_name (str): API name of the permission
         description (str): Description of the permission
-        expanded_description (str): Expanded description of the permission
         model_name (str): Name of the LLM model to use
         client (Optional[GenerativeModel]): The Google Generative AI client
         chat_session (Optional[ChatSession]): Existing chat session to use
