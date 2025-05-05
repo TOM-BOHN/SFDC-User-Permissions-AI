@@ -51,9 +51,9 @@ def description_eval_summary(
     model_name: str = 'gemini-2.0-flash',
     client = None,
     chat_session = None
-) -> Tuple[str, CategoryRating, CategoryLabel]:
+) -> Tuple[str, QualityRating]:
     """
-    Evaluates a permission using an LLM to determine its category rating and label.
+    Evaluates a permission using an LLM to determine its quality rating.
     
     Args:
         prompt (str): Template prompt for evaluation
@@ -88,13 +88,19 @@ def description_eval_summary(
         
         # Generate detailed evaluation
         try:
+            config_with_search = types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearch())],
+                temperature=0.0,
+            )
+
             response = chat.send_message(
                       message=prompt.format(
                       permission_name = name
                     , permission_api_name = api_name
                     , permission_description = description
-                )
-            )
+                ),
+                config=config_with_search,
+            ).candidates[0]
             verbose_eval = response.text
         except Exception as e:
             logger.error(f"Error generating evaluation: {str(e)}")
