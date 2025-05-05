@@ -55,7 +55,8 @@ def classify_risk_rating(
         >>> df = pd.DataFrame({
         ...     'Permission Name': ['View All Data'],
         ...     'API Name': ['ViewAllData'],
-        ...     'Description': ['Can view all data']
+        ...     'Description': ['Can view all data'],
+        ...     'Expanded Description': ['Can view all data in the organization']
         ... })
         >>> results = classify_risk_rating(
         ...     df, 
@@ -70,7 +71,7 @@ def classify_risk_rating(
         raise ValueError("Either client or chat_session must be provided")
     
     # Input validation
-    required_columns = ['Permission Name', 'API Name', 'Description']
+    required_columns = ['Permission Name', 'API Name', 'Description', 'Expanded Description']
     missing_columns = [col for col in required_columns if col not in input_df.columns]
     if missing_columns:
         raise ValueError(f"Input DataFrame missing required columns: {missing_columns}")
@@ -92,6 +93,7 @@ def classify_risk_rating(
         'Permission Name',
         'API Name',
         'Description',
+        'Expanded Description',
         'Risk Rating',
         'Evaluation',
         'Processing Time'
@@ -158,6 +160,7 @@ def classify_risk_rating(
                 print('Name:       ', input_df['Permission Name'].iloc[i])
                 print('API Name:   ', input_df['API Name'].iloc[i])
                 print('Description:', input_df['Description'].iloc[i])
+                print('Expanded Description:', input_df['Expanded Description'].iloc[i])
                 print('--------------------')
 
             # Evaluate permission
@@ -167,6 +170,7 @@ def classify_risk_rating(
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
                     description=input_df['Description'].iloc[i],
+                    expanded_description=input_df['Expanded Description'].iloc[i],
                     model_name=model_name,
                     client=client,
                     chat_session=chat_session
@@ -184,6 +188,7 @@ def classify_risk_rating(
                 'Permission Name': input_df['Permission Name'].iloc[i],
                 'API Name': input_df['API Name'].iloc[i],
                 'Description': input_df['Description'].iloc[i],
+                'Expanded Description': input_df['Expanded Description'].iloc[i],
                 'Risk Rating': struct_eval,
                 'Evaluation': text_eval,
                 'Processing Time': record_time

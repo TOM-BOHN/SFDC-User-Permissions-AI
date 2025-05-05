@@ -264,4 +264,4 @@ def _extract_fallback_label(eval_text: str) -> CloudLabel:
         else:
             return CloudLabel.UNKNOWN
     except Exception:
-        return CloudLabel.UNKNOWN
+        return CategoryLabel.UNKNOWN
