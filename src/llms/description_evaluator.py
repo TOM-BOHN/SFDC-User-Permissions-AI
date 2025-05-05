@@ -99,7 +99,8 @@ def description_eval_summary(
                 ),
                 config=config_with_search,
             ).candidates[0]
-            verbose_eval = response.text
+            verbose_eval = response.content.parts[0].text
+
         except Exception as e:
             logger.error(f"Error generating evaluation: {str(e)}")
             raise
