@@ -17,6 +17,9 @@ from typing import Tuple, Optional
 import logging
 import json
 
+import io
+from pprint import pprint
+
 from .chat_session import create_chat_session
 
 # Set up logging
@@ -41,6 +44,61 @@ class QualityRating(enum.Enum):
         except ValueError:
             logger.warning(f"Invalid quality rating value: {value}. Defaulting to UNKNOWN.")
             return cls.UNKNOWN
+        
+
+def write_markdown_output(response, debug: bool = False):
+    """
+    Writes a markdown buffer to a file.
+    """
+    # Extract the chunks and supports and the verbose evaluation
+    chunks = response.grounding_metadata.grounding_chunks
+    supports = response.grounding_metadata.grounding_supports
+    verbose_eval = response.content.parts[0].text
+
+    if debug:
+        print('\n################\n')
+        # Print the verbose evaluation
+        print(f"Verbose Evaluation: {verbose_eval}")
+        # Print the chunks
+        for chunk in chunks:
+            print(f'{chunk.web.title}: {chunk.web.uri}')
+        # Print the Support
+        for support in supports:
+            pprint(support.to_json_dict())
+        print('\n################\n')
+
+    # Start the buffer
+    markdown_buffer = io.StringIO()
+    # Add a Break
+    markdown_buffer.write('\n----\n')
+    # Print the content
+    markdown_buffer.write(response.content.parts[0].text)
+    # Add a Break
+    markdown_buffer.write('\n----\n')
+    # Print the text with footnote markers.
+    markdown_buffer.write("Supported text:\n\n")
+    for support in supports:
+        markdown_buffer.write(" * ")
+        markdown_buffer.write(
+            response.content.parts[0].text[support.segment.start_index : support.segment.end_index]
+        )
+
+        for i in support.grounding_chunk_indices:
+            chunk = chunks[i].web
+            markdown_buffer.write(f"<sup>[{i+1}]</sup>")
+
+        markdown_buffer.write("\n\n")
+    # Add a Break
+    markdown_buffer.write('\n----\n')
+    # And print the footnotes.
+    markdown_buffer.write("Citations:\n\n")
+    for i, chunk in enumerate(chunks, start=1):
+        markdown_buffer.write(f"{i}. [{chunk.web.title}]({chunk.web.uri})\n")
+    # Add a Break
+    markdown_buffer.write('\n----\n')
+
+    # Display all the markdown
+    return(markdown_buffer.getvalue())
 
 def description_eval_summary(
     prompt: str,
@@ -49,8 +107,9 @@ def description_eval_summary(
     description: str,
     model_name: str = 'gemini-2.0-flash',
     client = None,
-    chat_session = None
-) -> Tuple[str, QualityRating]:
+    chat_session = None,
+    debug: bool = False
+) -> Tuple[str, QualityRating, str]:
     """
     Evaluates a permission using an LLM to determine its quality rating.
     
@@ -64,10 +123,10 @@ def description_eval_summary(
         chat_session (Optional[ChatSession]): Existing chat session to use
         
     Returns:
-        Tuple[str, QualityRating]: Detailed evaluation text and structured quality rating
+        Tuple[str, QualityRating, str]: Detailed evaluation text, structured quality rating, and full fidelity evaluation
         
     Example:
-        >>> text, rating = description_eval_summary(
+        >>> text, rating, full_fidelity_eval = description_eval_summary(
         ...     prompt="Evaluate description for: {permission_name}",
         ...     name="View All Data",
         ...     api_name="ViewAllData",
@@ -83,7 +142,7 @@ def description_eval_summary(
     try:
         # Use existing chat session or create new one
         chat = chat_session or create_chat_session(client, model_name)
-        
+
         # Generate detailed evaluation
         try:
             config_with_search = types.GenerateContentConfig(
@@ -91,16 +150,45 @@ def description_eval_summary(
                 temperature=0.0,
             )
 
-            response = chat.send_message(
-                      message=prompt.format(
-                      permission_name = name
-                    , permission_api_name = api_name
-                    , permission_description = description
-                ),
-                config=config_with_search,
-            ).candidates[0]
+            def query_with_grounding(chat_session, prompt, config_with_search):
+                response = chat.send_message(
+                        message=prompt.format(
+                        permission_name = name
+                        , permission_api_name = api_name
+                        , permission_description = description
+                    ),
+                    config=config_with_search,
+                )
+                
+                return response.candidates[0]
+            
+            response = query_with_grounding(chat_session = chat, prompt = prompt, config_with_search = config_with_search)
+
+            # Retry the query if the grounding metadata is incomplete.
+            # This ensures that both 'grounding_supports' and 'grounding_chunks' are present before proceeding.
+            while not response.grounding_metadata.grounding_supports or not response.grounding_metadata.grounding_chunks:
+                # If incomplete grounding data was returned, retry.
+                response = query_with_grounding(chat_session = chat, prompt = prompt, config_with_search = config_with_search)
+
+            if debug:
+                print(f"Response: {response}")
+
+            # Extract the verbose evaluation
             verbose_eval = response.content.parts[0].text
 
+            if debug:
+                print('\n################\n')
+                # Print the verbose evaluation
+                print(f"Verbose Evaluation: {verbose_eval}")
+                print('\n################\n')
+
+            # Write the markdown buffer to a file
+            full_fidelity_eval = write_markdown_output(response=response, debug=debug)
+
+            if debug:
+                print(f"Full Fidelity Evaluation:")
+                display(Markdown(full_fidelity_eval))
+                
         except Exception as e:
             logger.error(f"Error generating evaluation: {str(e)}")
             raise
@@ -115,7 +203,14 @@ def description_eval_summary(
               message="Convert the final Match Rating to a QualityRating.",
               config=structured_output_rating_config,
             )
+
+            if debug:
+                print(f"Response Rating: {response_rating}")
+
             structured_rating = response_rating.parsed
+
+            if debug:
+                print(f"Structured Rating: {structured_rating}")
 
             # Validate structured output
             if not isinstance(structured_rating, QualityRating):
@@ -124,13 +219,19 @@ def description_eval_summary(
             
         except Exception as e:
             logger.error(f"Error generating structured output for rating: {str(e)}") 
+            if debug:
+                print(f"Error generating structured output for rating: {str(e)}")
             # Attempt to extract rating from verbose evaluation
             structured_rating = _extract_fallback_rating(verbose_eval)
+            if debug:
+                print(f"Structured Rating: {structured_rating}")
         
-        return verbose_eval, structured_rating
+        return verbose_eval, structured_rating, full_fidelity_eval
     
     except Exception as e:
         logger.error(f"Error in eval_summary: {str(e)}")
+        if debug:
+            print(f"Error in eval_summary: {str(e)}")
         return f"Error evaluating permission: {str(e)}", QualityRating.UNKNOWN
 
 def _extract_fallback_rating(eval_text: str) -> QualityRating:

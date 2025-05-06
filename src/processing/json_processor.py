@@ -33,7 +33,8 @@ def clean_json_string(json_string: str) -> str:
 
 def clean_expanded_description_column(df):
     if 'Expanded Description' in df.columns:
-        df['Expanded Description'] = df['Expanded Description'].str.replace(r'\s*\[\d+\]', '', regex=True)
+        df['Expanded Description'] = df['Expanded Description'].str.replace(r'\s*\[\d+(?:\s*,\s*\d+)*\]', '', regex=True)
+
     return df
 
 def extract_json_fields(
