@@ -179,6 +179,7 @@ def description_eval_summary(
                     response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
                 else:
                     logger.error(f"Failed to generate grounding metadata after {max_retries} retries.")
+                    break
 
             if debug:
                 print(f"Response: {response}")
