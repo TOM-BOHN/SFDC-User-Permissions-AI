@@ -165,6 +165,9 @@ def description_eval_summary(
             
             response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
 
+            if debug:
+                print(f"Response: {response}")
+
             # Retry the query if the grounding metadata is incomplete.
             # This ensures that both 'grounding_supports' and 'grounding_chunks' are present before proceeding.
             max_retries = 3
@@ -239,7 +242,7 @@ def description_eval_summary(
         logger.error(f"Error in eval_summary: {str(e)}")
         if debug:
             print(f"Error in eval_summary: {str(e)}")
-        return f"Error evaluating permission: {str(e)}", QualityRating.UNKNOWN
+        return f"Error evaluating permission: {str(e)}", QualityRating.UNKNOWN, None
 
 def _extract_fallback_rating(eval_text: str) -> QualityRating:
     """
