@@ -93,6 +93,7 @@ def classify_description(
         'Description',
         'Quality Rating',
         'Evaluation',
+        'Full Fidelity Evaluation'
         'Processing Time'
     ])
 
@@ -186,6 +187,7 @@ def classify_description(
                 'Description': input_df['Description'].iloc[i],
                 'Quality Rating': rating,
                 'Evaluation': text_eval,
+                'Full Fidelity Evaluation': full_fidelity_eval,
                 'Processing Time': record_time
             }])
             results_df = pd.concat([results_df, new_row], ignore_index=True)

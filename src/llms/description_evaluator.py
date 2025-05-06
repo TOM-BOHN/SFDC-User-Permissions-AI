@@ -148,7 +148,7 @@ def description_eval_summary(
         try:
             config_with_search = types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())],
-                temperature=0.0,
+                #temperature=0.0,
             )
 
             def query_with_grounding(chat, prompt, config_with_search):
@@ -170,7 +170,7 @@ def description_eval_summary(
 
             # Retry the query if the grounding metadata is incomplete.
             # This ensures that both 'grounding_supports' and 'grounding_chunks' are present before proceeding.
-            max_retries = 3
+            max_retries = 1
             retries = 0
             while not response.grounding_metadata.grounding_supports or not response.grounding_metadata.grounding_chunks:
                 # If incomplete grounding data was returned, retry.
@@ -178,7 +178,7 @@ def description_eval_summary(
                     retries += 1
                     response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
                 else:
-                    raise Exception(f"Failed to generate grounding metadata after {max_retries} retries.")
+                    logger.error(f"Failed to generate grounding metadata after {max_retries} retries.")
 
             if debug:
                 print(f"Response: {response}")
