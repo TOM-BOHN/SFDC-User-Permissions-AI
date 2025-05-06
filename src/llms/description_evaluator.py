@@ -58,42 +58,54 @@ def write_markdown_output(response, debug: bool = False):
     if debug:
         print('\n################\n')
         # Print the verbose evaluation
-        print(f"Verbose Evaluation: {verbose_eval}")
+        if verbose_eval is not None:
+            print(f"Verbose Evaluation: {verbose_eval}")
+        else:   
+            print("No verbose evaluation to display.")
         # Print the chunks
-        for chunk in chunks:
-            print(f'{chunk.web.title}: {chunk.web.uri}')
+        if chunks is not None:
+            for chunk in chunks:
+                print(f'{chunk.web.title}: {chunk.web.uri}')
+        else:
+             print("No chunks to display.")
         # Print the Support
-        for support in supports:
-            pprint(support.to_json_dict())
+        if supports is not None:
+            for support in supports:
+                pprint(support.to_json_dict())
+        else:
+            print("No support to display.")
         print('\n################\n')
 
     # Start the buffer
     markdown_buffer = io.StringIO()
-    # Add a Break
-    markdown_buffer.write('\n----\n')
-    # Print the content
-    markdown_buffer.write(response.content.parts[0].text)
-    # Add a Break
-    markdown_buffer.write('\n----\n')
-    # Print the text with footnote markers.
-    markdown_buffer.write("Supported text:\n\n")
-    for support in supports:
-        markdown_buffer.write(" * ")
-        markdown_buffer.write(
-            response.content.parts[0].text[support.segment.start_index : support.segment.end_index]
-        )
+    if verbose_eval is not None:
+        # Add a Break
+        markdown_buffer.write('\n----\n')
+        # Print the content
+        markdown_buffer.write(response.content.parts[0].text)
+    if supports is not None:
+        # Add a Break
+        markdown_buffer.write('\n----\n')
+        # Print the text with footnote markers.
+        markdown_buffer.write("Supported text:\n\n")
+        for support in supports:
+            markdown_buffer.write(" * ")
+            markdown_buffer.write(
+                response.content.parts[0].text[support.segment.start_index : support.segment.end_index]
+            )
 
-        for i in support.grounding_chunk_indices:
-            chunk = chunks[i].web
-            markdown_buffer.write(f"<sup>[{i+1}]</sup>")
+            for i in support.grounding_chunk_indices:
+                chunk = chunks[i].web
+                markdown_buffer.write(f"<sup>[{i+1}]</sup>")
 
-        markdown_buffer.write("\n\n")
-    # Add a Break
-    markdown_buffer.write('\n----\n')
-    # And print the footnotes.
-    markdown_buffer.write("Citations:\n\n")
-    for i, chunk in enumerate(chunks, start=1):
-        markdown_buffer.write(f"{i}. [{chunk.web.title}]({chunk.web.uri})\n")
+            markdown_buffer.write("\n\n")
+    if chunks is not None:
+        # Add a Break
+        markdown_buffer.write('\n----\n')
+        # And print the footnotes.
+        markdown_buffer.write("Citations:\n\n")
+        for i, chunk in enumerate(chunks, start=1):
+            markdown_buffer.write(f"{i}. [{chunk.web.title}]({chunk.web.uri})\n")
     # Add a Break
     markdown_buffer.write('\n----\n')
 
@@ -168,22 +180,6 @@ def description_eval_summary(
             if debug:
                 print(f"Response: {response}")
 
-            # Retry the query if the grounding metadata is incomplete.
-            # This ensures that both 'grounding_supports' and 'grounding_chunks' are present before proceeding.
-            max_retries = 1
-            retries = 0
-            while not response.grounding_metadata.grounding_supports or not response.grounding_metadata.grounding_chunks:
-                # If incomplete grounding data was returned, retry.
-                if retries < max_retries:
-                    retries += 1
-                    response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
-                else:
-                    logger.error(f"Failed to generate grounding metadata after {max_retries} retries.")
-                    break
-
-            if debug:
-                print(f"Response: {response}")
-
             # Extract the verbose evaluation
             verbose_eval = response.content.parts[0].text
 
@@ -193,17 +189,31 @@ def description_eval_summary(
                 print(f"Verbose Evaluation: {verbose_eval}")
                 print('\n################\n')
 
+        except Exception as e:
+            logger.error(f"Error generating verbose evaluation: {str(e)}")
+            if debug:
+                print(f"Error generating verbose evaluation: {str(e)}")
+            verbose_eval = None
+            
+
+        # Generate detailed evaluation
+        try:
             # Write the markdown buffer to a file
             full_fidelity_eval = write_markdown_output(response=response, debug=debug)
 
             if debug:
+                print('\n################\n')
+                # Print the full fidelity evaluation
                 print(f"Full Fidelity Evaluation:")
-                display(Markdown(full_fidelity_eval))
-                
+                print(full_fidelity_eval)
+                print('\n################\n')
+
         except Exception as e:
-            logger.error(f"Error generating evaluation: {str(e)}")
-            raise
-            
+            logger.error(f"Error generating full fidelity evaluation: {str(e)}")
+            if debug:
+                print(f"Error generating full fidelity evaluation: {str(e)}")
+            full_fidelity_eval = None
+
         # Generate structured output for rating
         try:
             structured_output_rating_config = types.GenerateContentConfig(
