@@ -121,6 +121,7 @@ def description_eval_summary(
         model_name (str): Name of the LLM model to use
         client (Optional[GenerativeModel]): The Google Generative AI client
         chat_session (Optional[ChatSession]): Existing chat session to use
+        debug (bool): Whether to print debug information
         
     Returns:
         Tuple[str, QualityRating, str]: Detailed evaluation text, structured quality rating, and full fidelity evaluation
@@ -150,25 +151,31 @@ def description_eval_summary(
                 temperature=0.0,
             )
 
-            def query_with_grounding(chat_session, prompt, config_with_search):
+            def query_with_grounding(chat, prompt, config_with_search):
                 response = chat.send_message(
                         message=prompt.format(
-                        permission_name = name
-                        , permission_api_name = api_name
-                        , permission_description = description
+                            permission_name = name
+                            , permission_api_name = api_name
+                            , permission_description = description
                     ),
                     config=config_with_search,
                 )
                 
                 return response.candidates[0]
             
-            response = query_with_grounding(chat_session = chat, prompt = prompt, config_with_search = config_with_search)
+            response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
 
             # Retry the query if the grounding metadata is incomplete.
             # This ensures that both 'grounding_supports' and 'grounding_chunks' are present before proceeding.
+            max_retries = 3
+            retries = 0
             while not response.grounding_metadata.grounding_supports or not response.grounding_metadata.grounding_chunks:
                 # If incomplete grounding data was returned, retry.
-                response = query_with_grounding(chat_session = chat, prompt = prompt, config_with_search = config_with_search)
+                if retries < max_retries:
+                    retries += 1
+                    response = query_with_grounding(chat = chat, prompt = prompt, config_with_search = config_with_search)
+                else:
+                    raise Exception(f"Failed to generate grounding metadata after {max_retries} retries.")
 
             if debug:
                 print(f"Response: {response}")

@@ -161,14 +161,15 @@ def classify_description(
 
             # Evaluate permission
             try:
-                text_eval, rating = description_eval_summary(
+                text_eval, rating, full_fidelity_eval = description_eval_summary(
                     prompt=prompt,
                     name=input_df['Permission Name'].iloc[i],
                     api_name=input_df['API Name'].iloc[i],
                     description=input_df['Description'].iloc[i],
                     model_name=model_name,
                     client=client,
-                    chat_session=chat_session
+                    chat_session=chat_session,
+                    debug=debug
                 )
             except Exception as e:
                 logger.error(f"Error evaluating permission at index {i}: {str(e)}")
